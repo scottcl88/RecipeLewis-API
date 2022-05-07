@@ -1,0 +1,362 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\RecipeLewis-API\\RecipeLewis-API.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj",
+        "projectName": "Business",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj",
+        "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[107.3.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj",
+        "projectName": "Database",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj",
+        "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.4, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[6.0.4, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.4, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj",
+        "projectName": "Models",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj",
+        "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\RecipeLewis-API\\RecipeLewis-API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\RecipeLewis-API\\RecipeLewis-API.csproj",
+        "projectName": "RecipeLewis-API",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\RecipeLewis-API\\RecipeLewis-API.csproj",
+        "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\RecipeLewis-API\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj"
+              },
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj"
+              },
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[11.0.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[107.3.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.2.3, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.3.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj",
+        "projectName": "Services",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj",
+        "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj"
+              },
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[11.0.1, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

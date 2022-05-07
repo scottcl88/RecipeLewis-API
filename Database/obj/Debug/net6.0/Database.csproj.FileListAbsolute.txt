@@ -1,0 +1,12 @@
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.csproj.AssemblyReference.cache
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.AssemblyInfoInputs.cache
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.AssemblyInfo.cs
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.csproj.CoreCompileInputs.cache
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\bin\Debug\net6.0\Database.deps.json
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\bin\Debug\net6.0\Database.dll
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\bin\Debug\net6.0\Database.pdb
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.dll
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\refint\Database.dll
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\Database.pdb
+C:\Users\scott\source\repos\scottcl88\RecipeLewis-API\Database\obj\Debug\net6.0\ref\Database.dll
