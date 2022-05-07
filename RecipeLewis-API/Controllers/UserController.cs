@@ -113,12 +113,12 @@ namespace RecipeLewis.Controllers
             {
                 string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
                 _logService.Info("Login Requested", UserId, new { ipAddress, request });
-                return new LoginUserResult() { Success = false, ShowAds = true, ShowFeedback = true };
+                return new LoginUserResult() { Success = false };
             }
             catch (Exception ex)
             {
                 _logService.Error(ex, "Error on Login", UserId, request);
-                return new LoginUserResult() { Success = false, ShowAds = true, ShowFeedback = true };
+                return new LoginUserResult() { Success = false };
             }
         }
 

@@ -5,38 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database
 {
-    public class SubUserIdEntity
-    {
-        public long UserID { get; set; }
-
-        [Column("SubUserId")]
-        public string Value { get; set; }
-    }
-
     public class User : EntityData
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long UserID { get; set; }
-        [Required]
-        public SubUserIdEntity SubUserId { get; set; }
-        public virtual Help Help { get; set; }
-        public virtual UserDeviceInfo DeviceInfo { get; set; }
+        public int UserId { get; set; }
         public Guid? UserGUID { get; set; }
         public string LastIPAddress { get; set; }
-        public string FirebaseUID { get; set; }
-        public string DeviceToken { get; set; }
-        public string DeviceId { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
         public string TimeZone { get; set; }
         public int UtcOffset { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public int MaxRadius { get; set; } = 25;
-        public bool AllowNotifications { get; set; }
-        public bool SeenStartupScreen { get; set; }
-        public bool ShowFeedback { get; set; }
-        public bool SubscribeMarketingEmail { get; set; } = true;
-        public bool ShowAds { get; set; } = true;
     }
 }

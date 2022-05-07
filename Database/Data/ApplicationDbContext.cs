@@ -14,12 +14,8 @@ namespace Database
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Place> Places { get; set; }
-        public DbSet<History> Histories { get; set; }
-        public DbSet<Preference> Preferences { get; set; }
-        public DbSet<CategoryPreference> CategoryPreferences { get; set; }
-        public DbSet<SearchParameter> SearchParameters { get; set; }
-        public DbSet<Group> Groups { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

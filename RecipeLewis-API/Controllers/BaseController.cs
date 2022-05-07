@@ -18,17 +18,17 @@ namespace RecipeLewis.Controllers
             HostingEnvironment = hostingEnvironment;
         }
 
-        private SubUserId _userId { get; set; }
+        private UserId _userId { get; set; }
 
-        public SubUserId UserId
+        public UserId UserId
         {
             get
             {
-                if (HostingEnvironment.IsDevelopment())
-                {
-                    return new SubUserId() { Value = "auth0|614bba878681e00069423f80" };
-                }
-                _userId = new SubUserId() { Value = User?.FindFirstValue(ClaimTypes.NameIdentifier) };
+                //if (HostingEnvironment.IsDevelopment())
+                //{
+                //    return new UserId() { Value = "auth0|614bba878681e00069423f80" };
+                //}
+                //_userId = new UserId() { Value = User?.FindFirstValue(ClaimTypes.NameIdentifier) };
                 return _userId;
             }
             set

@@ -11,11 +11,10 @@ namespace Database
     public class Feedback : EntityData
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long FeedbackID { get; set; }
+        public long FeedbackId { get; set; }
         public virtual User User { get; set; }
         public FeedbackType Type { get; set; }
         public string Comment { get; set; }
-        public string RouteInfo { get; set; }
         public string AdditionalInfo { get; set; }
     }
 }

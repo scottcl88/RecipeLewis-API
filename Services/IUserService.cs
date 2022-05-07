@@ -6,17 +6,14 @@ namespace RecipeLewis.Services
 {
     public interface IUserService
     {
-        public List<UserModel> SearchUsers(SubUserId userId, string query);
-        public User? GetUser(SubUserId userId);
+        public List<UserModel> SearchUsers(UserId userId, string query);
+        public User? GetUser(UserId userId);
 
-        public User? GetUserByGUID(Guid userGUID, SubUserId userId);
-        public Task<bool> UpdateProfile(UpdateUserProfileRequest request, SubUserId userId);
-        public Task<bool> UpdateHelp(UpdateUserHelpRequest request, SubUserId userId);
-        public Task<bool> LoginUser(LoginUserRequest request, string ipAddress, SubUserId userId);
-        public Task<bool> UpdateUserSeenSetupScreens(SubUserId userId);
-        public Task<bool> UpdateDeviceToken(string deviceToken, SubUserId userId);
-        public Task<bool> LogoutUser(SubUserId userId);
-        public Task<bool> DeleteUser(SubUserId userId);
-        public Task<bool> HardDeleteUser(SubUserId userId);
+        public User? GetUserByGUID(Guid userGUID, UserId userId);
+        public Task<bool> UpdateProfile(UpdateUserProfileRequest request, UserId userId);
+        public Task<bool> LoginUser(LoginUserRequest request, string ipAddress, UserId userId);
+        public Task<bool> LogoutUser(UserId userId);
+        public Task<bool> DeleteUser(UserId userId);
+        public Task<bool> HardDeleteUser(UserId userId);
     }
 }

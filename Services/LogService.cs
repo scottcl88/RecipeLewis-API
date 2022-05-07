@@ -47,9 +47,9 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public async Task<bool> AddLog(NgxLog ngxLog, SubUserId userId)
+        public async Task<bool> AddLog(NgxLog ngxLog, UserId userId)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.SubUserId.Value == userId.Value);
+            var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
 
             var newLog = new Log()
             {
@@ -68,9 +68,9 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Debug(string message, SubUserId userId, object? requestData = null)
+        public bool Debug(string message, UserId userId, object? requestData = null)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.SubUserId.Value == userId.Value);
+            var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()
             {
                 CreatedDateTime = DateTime.UtcNow,
@@ -86,9 +86,9 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Info(string message, SubUserId userId, object? requestData = null)
+        public bool Info(string message, UserId userId, object? requestData = null)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.SubUserId.Value == userId.Value);
+            var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()
             {
                 CreatedDateTime = DateTime.UtcNow,
@@ -104,9 +104,9 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Error(string message, SubUserId userId, object? requestData = null)
+        public bool Error(string message, UserId userId, object? requestData = null)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.SubUserId.Value == userId.Value);
+            var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             RejectChanges();
             var newLog = new Log()
             {
@@ -123,27 +123,10 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        //public bool Error(Exception exception, string message, object? requestData = null)
-        //{
-        //    RejectChanges();
-        //    var newLog = new Log()
-        //    {
-        //        CreatedDateTime = DateTime.UtcNow,
-        //        ModifiedDateTime = DateTime.UtcNow,
-        //        Level = LoggerLevel.ERROR,
-        //        Message = message + " --- " + exception.ToString(),
-        //        Additional = TryConvertAdditionalData(requestData),
-        //        Timestamp = DateTime.UtcNow
-        //    };
-        //    _dbContext.Add(newLog);
-        //    _dbContext.SaveChanges();
-        //    return true;
-        //}
-
-        public bool Error(Exception exception, string message, SubUserId userId, object? requestData = null)
+        public bool Error(Exception exception, string message, UserId userId, object? requestData = null)
         {
             RejectChanges();
-            var user = _dbContext.Users.FirstOrDefault(x => x.SubUserId.Value == userId.Value);
+            var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()
             {
                 CreatedDateTime = DateTime.UtcNow,
