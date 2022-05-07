@@ -140,14 +140,14 @@
         }
       }
     },
-    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
+    "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj",
+        "projectUniqueName": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj",
         "projectName": "Models",
-        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj",
+        "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj",
         "packagesPath": "C:\\Users\\scott\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\obj\\",
+        "outputPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\scott\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -221,8 +221,8 @@
               "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj": {
                 "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Business\\Business.csproj"
               },
-              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
-                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj"
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj"
               },
               "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj": {
                 "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Services\\Services.csproj"
@@ -310,8 +310,8 @@
               "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj": {
                 "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Database\\Database.csproj"
               },
-              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj": {
-                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Model\\Models.csproj"
+              "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj": {
+                "projectPath": "C:\\Users\\scott\\source\\repos\\scottcl88\\RecipeLewis-API\\Models\\Models.csproj"
               }
             }
           }
