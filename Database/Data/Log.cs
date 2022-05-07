@@ -40,8 +40,7 @@ namespace Database
     public class Log : EntityData
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long LogId { get; set; }
-
+        public int LogId { get; set; }
         public virtual User User { get; set; }
         public LoggerLevel Level { get; set; }
         public DateTime Timestamp { get; set; }

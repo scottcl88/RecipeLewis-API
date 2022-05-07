@@ -8,20 +8,21 @@ namespace Database
         [Required]
         [Display(Name = "Created Date")]
         public DateTime CreatedDateTime { get; set; }
-        [Required]
-        [Display(Name = "Created By")]
-        public User CreatedBy { get; set; }
 
         [Display(Name = "Modified Date")]
         public DateTime? ModifiedDateTime { get; set; }
-        [Required]
-        [Display(Name = "Modified By")]
-        public User? ModifiedBy { get; set; }
 
         [Display(Name = "Deleted Date")]
         public DateTime? DeletedDateTime { get; set; }
-        [Required]
+    }
+
+    public abstract class EntityDataUser : EntityData
+    {
+        [Display(Name = "Created By")]
+        public virtual User? CreatedBy { get; set; }
+        [Display(Name = "Modified By")]
+        public virtual User? ModifiedBy { get; set; }
         [Display(Name = "Deleted By")]
-        public User? DeletedBy { get; set; }
+        public virtual User? DeletedBy { get; set; }
     }
 }
