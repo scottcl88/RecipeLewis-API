@@ -88,21 +88,6 @@ namespace RecipeLewis.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("UpdateProfile")]
-        [SwaggerOperation(Summary = "Update user profile")]
-        public async Task<bool> UpdateProfile(UpdateUserProfileRequest request)
-        {
-            try
-            {
-                return await _userService.UpdateProfile(request, UserId);
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on UpdateProfile", UserId, request);
-                return false;
-            }
-        }
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public IActionResult Authenticate(AuthenticateRequest model)
@@ -138,7 +123,7 @@ namespace RecipeLewis.Controllers
         [HttpGet("{id}/refresh-tokens")]
         public IActionResult GetRefreshTokens(int id)
         {
-            var user = _userService.GetUser(new UserId() { Value = id });
+            var user = _userService.GetUser(new UserId(id));
             return Ok(user?.RefreshTokens);
         }
 

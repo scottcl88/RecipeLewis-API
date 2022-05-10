@@ -9,4 +9,3 @@ public class AuthenticateRequest
     [Required]
     public string Password { get; set; }
 }
-public record class RevokeTokenRequest(string Token);

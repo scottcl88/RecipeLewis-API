@@ -1,7 +1,17 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RecipeLewis.Models;
 
+public class RevokeTokenRequest
+{
+    public string Token { get; set; }
+}
+public class ValidateResetTokenRequest
+{
+    [Required]
+    public string Token { get; set; }
+}
 public class RefreshTokenModel : EntityDataModel
 {
     [JsonIgnore]

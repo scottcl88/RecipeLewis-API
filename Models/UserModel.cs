@@ -1,11 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace RecipeLewis.Models;
-
-public class UserId
+public enum Role
 {
-    public int Value { get; set; }
+    Admin,
+    User
 }
+public record class UserId(int Value);
 
 public class UserModel : EntityDataModel
 {
