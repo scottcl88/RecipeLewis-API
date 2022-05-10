@@ -22,42 +22,6 @@ namespace RecipeLewis.Controllers
             _logService = logService;
         }
 
-        [HttpGet]
-        [Route("Test")]
-        [SwaggerOperation(Summary = "Testing purposes")]
-        public string TestLog()
-        {
-            _logService.Info("Testing and logging works! ", UserId);
-            return "Testing works";
-        }
-
-        [HttpGet]
-        [Authorize]
-        [Route("TestAuth")]
-        [SwaggerOperation(Summary = "Testing purposes")]
-        public string TestAuth()
-        {
-            return "TestAuth works";
-        }
-
-        [HttpGet]
-        [Authorize("read:current_user")]
-        [Route("TestAuthPolicy")]
-        [SwaggerOperation(Summary = "Testing purposes")]
-        public string TestAuthPolicy()
-        {
-            return "TestAuthPolicy works";
-        }
-
-        [HttpGet]
-        [Authorize("read:current_user2")]
-        [Route("TestAuthPolicy2")]
-        [SwaggerOperation(Summary = "Testing purposes")]
-        public string TestAuthPolicy2()
-        {
-            return "TestAuthPolicy2 works";
-        }
-
         [HttpPost]
         [Route("AddLog")]
         [SwaggerOperation(Summary = "Add log to the database")]

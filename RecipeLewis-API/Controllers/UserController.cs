@@ -72,9 +72,9 @@ namespace RecipeLewis.Controllers
         }
 
         [HttpGet]
-        [Route("GetUserFromQR")]
+        [Route("GetUserByGUID")]
         [SwaggerOperation(Summary = "Get the user by UserGUID for QR scanning")]
-        public UserModel GetUserFromQR([Required] Guid userGUID)
+        public UserModel GetUserByGUID([Required] Guid userGUID)
         {
             try
             {
@@ -103,73 +103,65 @@ namespace RecipeLewis.Controllers
                 return false;
             }
         }
-
-        [HttpPost]
-        [Route("Login")]
-        [SwaggerOperation(Summary = "Create the user if new or update user last login datetime and return if they saw the startup screen")]
-        public async Task<LoginUserResult> Login(LoginUserRequest request)
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate(AuthenticateRequest model)
         {
-            try
-            {
-                string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                _logService.Info("Login Requested", UserId, new { ipAddress, request });
-                return new LoginUserResult() { Success = false };
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on Login", UserId, request);
-                return new LoginUserResult() { Success = false };
-            }
+            var response = _userService.Authenticate(model, ipAddress());
+            setTokenCookie(response.RefreshToken);
+            return Ok(response);
         }
 
-        [HttpPost]
-        [Route("Logout")]
-        [SwaggerOperation(Summary = "Updates the user logout datetime")]
-        public async Task<bool> Logout()
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public IActionResult RefreshToken()
         {
-            try
-            {
-                return await _userService.LogoutUser(UserId);
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on Logout", UserId);
-                return false;
-            }
+            var refreshToken = Request.Cookies["refreshToken"];
+            var response = _userService.RefreshToken(refreshToken, ipAddress());
+            setTokenCookie(response.RefreshToken);
+            return Ok(response);
         }
 
-        [HttpPost]
-        [Route("Delete")]
-        [SwaggerOperation(Summary = "Soft delete the user")]
-        public async Task<bool> Delete()
+        [HttpPost("revoke-token")]
+        public IActionResult RevokeToken(RevokeTokenRequest model)
         {
-            try
-            {
-                _logService.Info("Delete Requested", UserId);
-                return await _userService.DeleteUser(UserId);
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on Delete", UserId);
-                return false;
-            }
+            // accept refresh token in request body or cookie
+            var token = model.Token ?? Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { message = "Token is required" });
+
+            _userService.RevokeToken(token, ipAddress());
+            return Ok(new { message = "Token revoked" });
         }
 
-        [HttpPost]
-        [Route("HardDelete")]
-        [SwaggerOperation(Summary = "Hard delete the user using a stored procedure, removes them from Auth0")]
-        public async Task<bool> HardDelete()
+        [HttpGet("{id}/refresh-tokens")]
+        public IActionResult GetRefreshTokens(int id)
         {
-            try
+            var user = _userService.GetUser(new UserId() { Value = id });
+            return Ok(user?.RefreshTokens);
+        }
+
+        // helper methods
+
+        private void setTokenCookie(string token)
+        {
+            // append cookie with refresh token to the http response
+            var cookieOptions = new CookieOptions
             {
-                _logService.Info("HardDelete Requested", UserId);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on HardDelete", UserId);
-                return false;
-            }
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
+        private string ipAddress()
+        {
+            // get source ip address for the current request
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                return Request.Headers["X-Forwarded-For"];
+            else
+                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
     }
 }
