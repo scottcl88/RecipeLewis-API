@@ -17,6 +17,7 @@ namespace RecipeLewis.Controllers
         {
             HostingEnvironment = hostingEnvironment;
         }
+        public UserModel User => (UserModel)HttpContext.Items["User"];
 
         private UserId _userId { get; set; }
 
@@ -29,7 +30,7 @@ namespace RecipeLewis.Controllers
                 //    return new UserId() { Value = "auth0|614bba878681e00069423f80" };
                 //}
                 //_userId = new UserId() { Value = User?.FindFirstValue(ClaimTypes.NameIdentifier) };
-                return _userId;
+                return User.UserId;
             }
             set
             {

@@ -6,6 +6,15 @@ using RecipeLewis.Middleware;
 using RecipeLewis.Models;
 using RecipeLewis.Services;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+
+bool IsOriginAllowed(string host)
+{
+    var corsStrictOriginAllowed = new[] { "capacitor://localhost" };
+    var corsOriginAllowed = new[] { "capacitor", "com.lewis.food", "foodlewis.com", "scottcl.com", "foodlewis.com", "localhost", "surf-n-eat.com", "surfneat.com" };
+    return corsOriginAllowed.Any(origin =>
+        Regex.IsMatch(host, $@"^((http(s)?)|({origin}))?://.*{origin}(:[0-9]+)?$", RegexOptions.IgnoreCase)) || corsStrictOriginAllowed.Any(origin => host == origin);
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +27,18 @@ var builder = WebApplication.CreateBuilder(args);
                     options.UseLazyLoadingProxies()
                    .UseSqlServer(
                        builder.Configuration["DefaultConnection"]));
-    services.AddCors();
-    services.AddControllers()
-        .AddJsonOptions(x => x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+    services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+    {
+        builder.AllowCredentials()
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .WithExposedHeaders("content-disposition")
+               .SetIsOriginAllowed(IsOriginAllowed);
+    }));
+    services.AddControllers().AddJsonOptions(x => {
+        // serialize enums as strings in api responses (e.g. Role)
+        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
@@ -48,6 +66,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<LogService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IEmailService, EmailService>();
 }
 
 var app = builder.Build();

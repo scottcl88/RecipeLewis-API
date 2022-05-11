@@ -35,7 +35,7 @@ public class UserService : IUserService
     }
     public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
     {
-        var user = _dbContext.Users.SingleOrDefault(x => x.Username == model.Username);
+        var user = _dbContext.Users.SingleOrDefault(x => x.Email == model.Email);
 
         // validate
         if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
@@ -150,66 +150,67 @@ public class UserService : IUserService
         token.ReplacedByToken = replacedByToken;
     }
 
-    public void Register(RegisterRequest model, string origin)
+    public void Register(RegisterRequest model, string ipAddress, string origin)
     {
         // validate
         if (_dbContext.Users.Any(x => x.Email == model.Email))
         {
-            // send already registered error in email to prevent account enumeration
+            // send already registered error in email to prevent user enumeration
             sendAlreadyRegisteredEmail(model.Email, origin);
             return;
         }
 
-        // map model to new account object
-        var account = _mapper.Map<User>(model);
+        // map model to new user object
+        var user = _mapper.Map<User>(model);
+        user.LastIPAddress = ipAddress;
 
-        // first registered account is an admin
-        var isFirstAccount = _dbContext.Users.Count() == 0;
-        account.Role = isFirstAccount ? Database.Role.Admin : Database.Role.User;
-        account.CreatedDateTime = DateTime.UtcNow;
-        account.VerificationToken = generateVerificationToken();
+        // first registered user is an admin
+        var isFirstuser = _dbContext.Users.Count() == 0;
+        user.Role = isFirstuser ? Database.Role.Admin : Database.Role.User;
+        user.CreatedDateTime = DateTime.UtcNow;
+        user.VerificationToken = generateVerificationToken();
 
         // hash password
-        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-        // save account
-        _dbContext.Users.Add(account);
+        // save user
+        _dbContext.Users.Add(user);
         _dbContext.SaveChanges();
 
         // send email
-        sendVerificationEmail(account, origin);
+        sendVerificationEmail(user, origin);
     }
 
     public void VerifyEmail(string token)
     {
-        var account = _dbContext.Users.SingleOrDefault(x => x.VerificationToken == token);
+        var user = _dbContext.Users.SingleOrDefault(x => x.VerificationToken == token);
 
-        if (account == null)
+        if (user == null)
             throw new AppException("Verification failed");
 
-        account.Verified = DateTime.UtcNow;
-        account.VerificationToken = null;
+        user.Verified = DateTime.UtcNow;
+        user.VerificationToken = null;
 
-        _dbContext.Users.Update(account);
+        _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
     }
 
     public void ForgotPassword(ForgotPasswordRequest model, string origin)
     {
-        var account = _dbContext.Users.SingleOrDefault(x => x.Email == model.Email);
+        var user = _dbContext.Users.SingleOrDefault(x => x.Email == model.Email);
 
         // always return ok response to prevent email enumeration
-        if (account == null) return;
+        if (user == null) return;
 
         // create reset token that expires after 1 day
-        account.ResetToken = generateResetToken();
-        account.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
+        user.ResetToken = generateResetToken();
+        user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
 
-        _dbContext.Users.Update(account);
+        _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
 
         // send email
-        sendPasswordResetEmail(account, origin);
+        sendPasswordResetEmail(user, origin);
     }
 
     public void ValidateResetToken(ValidateResetTokenRequest model)
@@ -219,15 +220,15 @@ public class UserService : IUserService
 
     public void ResetPassword(ResetPasswordRequest model)
     {
-        var account = getUserByResetToken(model.Token);
+        var user = getUserByResetToken(model.Token);
 
         // update password and remove reset token
-        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-        account.PasswordReset = DateTime.UtcNow;
-        account.ResetToken = null;
-        account.ResetTokenExpires = null;
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        user.PasswordReset = DateTime.UtcNow;
+        user.ResetToken = null;
+        user.ResetTokenExpires = null;
 
-        _dbContext.Users.Update(account);
+        _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
     }
 
@@ -237,7 +238,7 @@ public class UserService : IUserService
         if (_dbContext.Users.Any(x => x.Email == model.Email))
             throw new AppException($"Email '{model.Email}' is already registered");
 
-        // map model to new account object
+        // map model to new user object
         var user = _mapper.Map<User>(model);
         user.CreatedDateTime = DateTime.UtcNow;
         user.Verified = DateTime.UtcNow;
@@ -245,7 +246,7 @@ public class UserService : IUserService
         // hash password
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-        // save account
+        // save user
         _dbContext.Users.Add(user);
         _dbContext.SaveChanges();
 
@@ -264,7 +265,7 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(model.Password))
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-        // copy model to account and save
+        // copy model to user and save
         _mapper.Map(model, user);
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.Users.Update(user);
@@ -282,25 +283,25 @@ public class UserService : IUserService
 
     private User getUserByResetToken(string token)
     {
-        var account = _dbContext.Users.SingleOrDefault(x =>
+        var user = _dbContext.Users.SingleOrDefault(x =>
             x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
-        if (account == null) throw new AppException("Invalid token");
-        return account;
+        if (user == null) throw new AppException("Invalid token");
+        return user;
     }
 
-    private string generateJwtToken(User account)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", account.UserId.ToString()) }),
-            Expires = DateTime.UtcNow.AddMinutes(15),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
+    //private string generateJwtToken(User user)
+    //{
+    //    var tokenHandler = new JwtSecurityTokenHandler();
+    //    var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+    //    var tokenDescriptor = new SecurityTokenDescriptor
+    //    {
+    //        Subject = new ClaimsIdentity(new[] { new Claim("id", user.UserId.ToString()) }),
+    //        Expires = DateTime.UtcNow.AddMinutes(15),
+    //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+    //    };
+    //    var token = tokenHandler.CreateToken(tokenDescriptor);
+    //    return tokenHandler.WriteToken(token);
+    //}
 
     private string generateResetToken()
     {
@@ -328,14 +329,14 @@ public class UserService : IUserService
         return token;
     }
 
-    private void sendVerificationEmail(User account, string origin)
+    private void sendVerificationEmail(User user, string origin)
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
         {
             // origin exists if request sent from browser single page app (e.g. Angular or React)
             // so send link to verify via single page app
-            var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
+            var verifyUrl = $"{origin}/user/verify-email?token={user.VerificationToken}";
             message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
         }
@@ -343,12 +344,12 @@ public class UserService : IUserService
         {
             // origin missing if request sent directly to api (e.g. from Postman)
             // so send instructions to verify directly with api
-            message = $@"<p>Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:</p>
-                            <p><code>{account.VerificationToken}</code></p>";
+            message = $@"<p>Please use the below token to verify your email address with the <code>/users/verify-email</code> api route:</p>
+                            <p><code>{user.VerificationToken}</code></p>";
         }
 
         _emailService.Send(
-            to: account.Email,
+            to: user.Email,
             subject: "Sign-up Verification API - Verify Email",
             html: $@"<h4>Verify Email</h4>
                         <p>Thanks for registering!</p>
@@ -360,9 +361,9 @@ public class UserService : IUserService
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
-            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/account/forgot-password"">forgot password</a> page.</p>";
+            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/user/forgot-password"">forgot password</a> page.</p>";
         else
-            message = "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>";
+            message = "<p>If you don't know your password you can reset it via the <code>/users/forgot-password</code> api route.</p>";
 
         _emailService.Send(
             to: email,
@@ -373,23 +374,23 @@ public class UserService : IUserService
         );
     }
 
-    private void sendPasswordResetEmail(User account, string origin)
+    private void sendPasswordResetEmail(User user, string origin)
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
         {
-            var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+            var resetUrl = $"{origin}/user/reset-password?token={user.ResetToken}";
             message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                             <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
         }
         else
         {
-            message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
-                            <p><code>{account.ResetToken}</code></p>";
+            message = $@"<p>Please use the below token to reset your password with the <code>/users/reset-password</code> api route:</p>
+                            <p><code>{user.ResetToken}</code></p>";
         }
 
         _emailService.Send(
-            to: account.Email,
+            to: user.Email,
             subject: "Sign-up Verification API - Reset Password",
             html: $@"<h4>Reset Password Email</h4>
                         {message}"

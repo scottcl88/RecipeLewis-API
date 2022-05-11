@@ -39,13 +39,7 @@ public class ForgotPasswordRequest
 public class RegisterRequest
 {
     [Required]
-    public string Title { get; set; }
-
-    [Required]
-    public string FirstName { get; set; }
-
-    [Required]
-    public string LastName { get; set; }
+    public string Name { get; set; }
 
     [Required]
     [EmailAddress]
@@ -58,9 +52,6 @@ public class RegisterRequest
     [Required]
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
-
-    [Range(typeof(bool), "true", "true")]
-    public bool AcceptTerms { get; set; }
 }
 public class ResetPasswordRequest
 {
@@ -81,7 +72,7 @@ public class UpdateRequest
     private string _confirmPassword;
     private string _role;
     private string _email;
-
+    public int UserId { get; set; }
     public string Title { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }

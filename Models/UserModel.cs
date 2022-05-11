@@ -20,6 +20,11 @@ public class UserModel : EntityDataModel
     public string? Email { get; set; }
     public string? Name { get; set; }
     public string Username { get; set; }
+    public Role Role { get; set; }
     [JsonIgnore]
     public List<RefreshTokenModel> RefreshTokens { get; set; }
+    public bool OwnsToken(string token)
+    {
+        return this.RefreshTokens?.Find(x => x.Token == token) != null;
+    }
 }
