@@ -12,8 +12,18 @@ namespace RecipeLewis.Business
             CreateMap<EntityData, EntityDataModel>();
             CreateMap<EntityDataUser, EntityDataUserModel>();
             CreateMap<User, UserModel>();
+            CreateMap<UserModel, User>();
             CreateMap<RegisterRequest, User>();
             CreateMap<RefreshToken, RefreshTokenModel>();
+            CreateMap<Recipe, RecipeModel>();
+            CreateMap<CreateRecipeRequest, RecipeModel>();
+            CreateMap<UpdateRecipeRequest, RecipeModel>();
+            CreateMap<Category, CategoryModel>();
+            CreateMap<Tag, TagModel>();
+            CreateMap<Document, DocumentModel>();
+            CreateMap<CategoryModel, Category>();
+            CreateMap<TagModel, Tag>();
+            CreateMap<DocumentModel, Document>();
         }
     }
 }

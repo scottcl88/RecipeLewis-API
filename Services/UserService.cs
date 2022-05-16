@@ -33,12 +33,12 @@ public class UserService : IUserService
         _emailService = emailService;
         _appSettings = appSettings.Value;
     }
-    public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
+    public AuthenticateResponse Authenticate(AuthenticateRequest request, string ipAddress)
     {
-        var user = _dbContext.Users.SingleOrDefault(x => x.Email == model.Email);
+        var user = _dbContext.Users.SingleOrDefault(x => x.Email == request.Email);
 
         // validate
-        if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new AppException("Username or password is incorrect");
 
         // authentication successful so generate jwt and refresh tokens
@@ -150,18 +150,18 @@ public class UserService : IUserService
         token.ReplacedByToken = replacedByToken;
     }
 
-    public void Register(RegisterRequest model, string ipAddress, string origin)
+    public void Register(RegisterRequest request, string ipAddress, string origin)
     {
         // validate
-        if (_dbContext.Users.Any(x => x.Email == model.Email))
+        if (_dbContext.Users.Any(x => x.Email == request.Email))
         {
             // send already registered error in email to prevent user enumeration
-            sendAlreadyRegisteredEmail(model.Email, origin);
+            sendAlreadyRegisteredEmail(request.Email, origin);
             return;
         }
 
         // map model to new user object
-        var user = _mapper.Map<User>(model);
+        var user = _mapper.Map<User>(request);
         user.LastIPAddress = ipAddress;
 
         // first registered user is an admin
@@ -171,7 +171,7 @@ public class UserService : IUserService
         user.VerificationToken = generateVerificationToken();
 
         // hash password
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // save user
         _dbContext.Users.Add(user);
@@ -195,9 +195,9 @@ public class UserService : IUserService
         _dbContext.SaveChanges();
     }
 
-    public void ForgotPassword(ForgotPasswordRequest model, string origin)
+    public void ForgotPassword(ForgotPasswordRequest request, string origin)
     {
-        var user = _dbContext.Users.SingleOrDefault(x => x.Email == model.Email);
+        var user = _dbContext.Users.SingleOrDefault(x => x.Email == request.Email);
 
         // always return ok response to prevent email enumeration
         if (user == null) return;
@@ -213,17 +213,17 @@ public class UserService : IUserService
         sendPasswordResetEmail(user, origin);
     }
 
-    public void ValidateResetToken(ValidateResetTokenRequest model)
+    public void ValidateResetToken(ValidateResetTokenRequest request)
     {
-        getUserByResetToken(model.Token);
+        getUserByResetToken(request.Token);
     }
 
-    public void ResetPassword(ResetPasswordRequest model)
+    public void ResetPassword(ResetPasswordRequest request)
     {
-        var user = getUserByResetToken(model.Token);
+        var user = getUserByResetToken(request.Token);
 
         // update password and remove reset token
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
         user.PasswordReset = DateTime.UtcNow;
         user.ResetToken = null;
         user.ResetTokenExpires = null;
@@ -232,19 +232,19 @@ public class UserService : IUserService
         _dbContext.SaveChanges();
     }
 
-    public UserModel Create(CreateRequest model)
+    public UserModel Create(CreateUserRequest request)
     {
         // validate
-        if (_dbContext.Users.Any(x => x.Email == model.Email))
-            throw new AppException($"Email '{model.Email}' is already registered");
+        if (_dbContext.Users.Any(x => x.Email == request.Email))
+            throw new AppException($"Email '{request.Email}' is already registered");
 
         // map model to new user object
-        var user = _mapper.Map<User>(model);
+        var user = _mapper.Map<User>(request);
         user.CreatedDateTime = DateTime.UtcNow;
         user.Verified = DateTime.UtcNow;
 
         // hash password
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // save user
         _dbContext.Users.Add(user);
@@ -253,20 +253,20 @@ public class UserService : IUserService
         return _mapper.Map<UserModel>(user);
     }
 
-    public UserModel Update(UserId id, UpdateRequest model)
+    public UserModel Update(UserId id, UpdateUserRequest request)
     {
         var user = getUserById(id);
 
         // validate
-        if (user.Email != model.Email && _dbContext.Users.Any(x => x.Email == model.Email))
-            throw new AppException($"Email '{model.Email}' is already registered");
+        if (user.Email != request.Email && _dbContext.Users.Any(x => x.Email == request.Email))
+            throw new AppException($"Email '{request.Email}' is already registered");
 
         // hash password if it was entered
-        if (!string.IsNullOrEmpty(model.Password))
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        if (!string.IsNullOrEmpty(request.Password))
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // copy model to user and save
-        _mapper.Map(model, user);
+        _mapper.Map(request, user);
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
@@ -288,20 +288,6 @@ public class UserService : IUserService
         if (user == null) throw new AppException("Invalid token");
         return user;
     }
-
-    //private string generateJwtToken(User user)
-    //{
-    //    var tokenHandler = new JwtSecurityTokenHandler();
-    //    var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-    //    var tokenDescriptor = new SecurityTokenDescriptor
-    //    {
-    //        Subject = new ClaimsIdentity(new[] { new Claim("id", user.UserId.ToString()) }),
-    //        Expires = DateTime.UtcNow.AddMinutes(15),
-    //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-    //    };
-    //    var token = tokenHandler.CreateToken(tokenDescriptor);
-    //    return tokenHandler.WriteToken(token);
-    //}
 
     private string generateResetToken()
     {

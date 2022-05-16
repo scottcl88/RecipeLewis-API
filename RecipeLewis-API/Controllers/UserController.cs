@@ -88,11 +88,11 @@ namespace RecipeLewis.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public AuthenticateResponse Authenticate(AuthenticateRequest model)
+        public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
             var response = _userService.Authenticate(model, ipAddress());
             setTokenCookie(response.RefreshToken);
-            return response;
+            return Ok(response);
         }
 
         [AllowAnonymous]
@@ -171,14 +171,14 @@ namespace RecipeLewis.Controllers
 
         [Authorize(Role.Admin)]
         [HttpPost("create")]
-        public ActionResult<UserModel> Create(CreateRequest model)
+        public ActionResult<UserModel> Create(CreateUserRequest model)
         {
             var account = _userService.Create(model);
             return Ok(account);
         }
 
         [HttpPut("update/{id:int}")]
-        public ActionResult<UserModel> Update(UpdateRequest model)
+        public ActionResult<UserModel> Update(UpdateUserRequest model)
         {
             // users can update their own account and admins can update any account
             if (model.UserId != User.UserId.Value && User.Role != Role.Admin)

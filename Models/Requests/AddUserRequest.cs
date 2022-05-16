@@ -2,7 +2,7 @@
 
 namespace RecipeLewis.Models.Requests;
 
-public class CreateRequest
+public class CreateUserRequest
 {
     [Required]
     public string Title { get; set; }
@@ -66,7 +66,7 @@ public class ResetPasswordRequest
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 }
-public class UpdateRequest
+public class UpdateUserRequest
 {
     private string _password;
     private string _confirmPassword;
