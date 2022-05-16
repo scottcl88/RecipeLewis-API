@@ -53,7 +53,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
-        [HttpGet("GetAll")]
+        [HttpGet("get-all")]
         [SwaggerOperation(Summary = "Get all recipes")]
         public List<RecipeModel> GetAll(int id)
         {
@@ -69,7 +69,7 @@ namespace RecipeLewis.Controllers
             }
         }
 
-        [HttpGet("Get/{id}")]
+        [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get recipe by id")]
         public RecipeModel Get(int id)
         {
@@ -84,7 +84,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [SwaggerOperation(Summary = "Create recipe")]
         public ActionResult<RecipeModel> Create(CreateRecipeRequest request)
         {
@@ -99,7 +99,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
-        [HttpPost("Update")]
+        [HttpPut("update")]
         [SwaggerOperation(Summary = "Update recipe")]
         public ActionResult<RecipeModel> Update(UpdateRecipeRequest request)
         {

@@ -41,12 +41,12 @@ namespace Database
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int LogId { get; set; }
-        public virtual User User { get; set; }
-        public LoggerLevel Level { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string FileName { get; set; }
-        public string LineNumber { get; set; }
-        public string Message { get; set; }
-        public string Additional { get; set; }
+        public virtual User? User { get; set; }
+        public LoggerLevel? Level { get; set; }
+        public DateTime? Timestamp { get; set; }
+        public string? FileName { get; set; }
+        public string? LineNumber { get; set; }
+        public string? Message { get; set; }
+        public string? Additional { get; set; }
     }
 }

@@ -66,6 +66,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<LogService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IRecipeService, RecipeService>();
     services.AddScoped<IEmailService, EmailService>();
 }
 
