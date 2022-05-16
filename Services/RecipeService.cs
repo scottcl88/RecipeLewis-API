@@ -11,18 +11,22 @@ public class RecipeService : IRecipeService
     private readonly ApplicationDbContext _dbContext;
     private readonly LogService _logService;
     private readonly IMapper _mapper;
+    private readonly IUserService _userService;
 
-    public RecipeService(ApplicationDbContext dbContext, LogService logService, IMapper mapper)
+    public RecipeService(ApplicationDbContext dbContext, LogService logService, IUserService userService, IMapper mapper)
     {
         _dbContext = dbContext;
         _logService = logService;
         _mapper = mapper;
+        _userService = userService;
     }
-    public RecipeModel Create(CreateRecipeRequest request)
+    public RecipeModel Create(CreateRecipeRequest request, UserModel currentUser)
     {
         // map model to new recipe object
         var recipe = _mapper.Map<Recipe>(request);
         recipe.CreatedDateTime = DateTime.UtcNow;
+        var user = _userService.GetDbUserById(currentUser.UserId);
+        recipe.CreatedBy = user;
 
         // save recipe
         _dbContext.Recipes.Add(recipe);
@@ -31,12 +35,14 @@ public class RecipeService : IRecipeService
         return _mapper.Map<RecipeModel>(recipe);
     }
 
-    public RecipeModel Update(UpdateRecipeRequest request)
+    public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser)
     {
         var recipe = getRecipeById(request.Id);
 
         _mapper.Map(request, recipe);
         recipe.ModifiedDateTime = DateTime.UtcNow;
+        var user = _userService.GetDbUserById(currentUser.UserId);
+        recipe.ModifiedBy = user;
         _dbContext.Recipes.Update(recipe);
         _dbContext.SaveChanges();
 

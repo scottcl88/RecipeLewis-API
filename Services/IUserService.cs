@@ -9,6 +9,7 @@ namespace RecipeLewis.Services
     {
         public List<UserModel> SearchUsers(UserId userId, string query);
         public UserModel? GetUser(UserId userId);
+        public User? GetDbUserById(UserId userId);
         public UserModel? GetUserByGUID(Guid userGUID, UserId userId);
         public AuthenticateResponse Authenticate(AuthenticateRequest request, string ipAddress);
         public void RevokeToken(string token, string ipAddress);

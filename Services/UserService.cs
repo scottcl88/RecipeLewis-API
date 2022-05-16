@@ -255,7 +255,7 @@ public class UserService : IUserService
 
     public UserModel Update(UserId id, UpdateUserRequest request)
     {
-        var user = getUserById(id);
+        var user = GetDbUserById(id);
 
         // validate
         if (user.Email != request.Email && _dbContext.Users.Any(x => x.Email == request.Email))
@@ -276,7 +276,7 @@ public class UserService : IUserService
 
     public void Delete(UserId id)
     {
-        var user = getUserById(id);
+        var user = GetDbUserById(id);
         _dbContext.Users.Remove(user);
         _dbContext.SaveChanges();
     }
@@ -391,11 +391,11 @@ public class UserService : IUserService
 
     public UserModel? GetUser(UserId userId)
     {
-        var user = getUserById(userId);
+        var user = GetDbUserById(userId);
         var userModel = _mapper.Map<UserModel>(user);
         return userModel;
     }
-    private User? getUserById(UserId userId)
+    public User? GetDbUserById(UserId userId)
     {
         var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value && x.DeletedDateTime == null);
         if (user == null)

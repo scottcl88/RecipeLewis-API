@@ -90,7 +90,7 @@ namespace RecipeLewis.Controllers
         {
             try
             {
-                var recipe = _recipeService.Create(request);
+                var recipe = _recipeService.Create(request, User);
                 return Ok(recipe);
             }
             catch (Exception ex)
@@ -105,7 +105,7 @@ namespace RecipeLewis.Controllers
         {
             try
             {
-                var recipe = _recipeService.Update(request);
+                var recipe = _recipeService.Update(request, User);
                 return Ok(recipe);
             }
             catch (Exception ex)

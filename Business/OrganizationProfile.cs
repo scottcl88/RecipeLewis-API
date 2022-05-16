@@ -18,6 +18,8 @@ namespace RecipeLewis.Business
             CreateMap<Recipe, RecipeModel>();
             CreateMap<CreateRecipeRequest, RecipeModel>();
             CreateMap<UpdateRecipeRequest, RecipeModel>();
+            CreateMap<CreateRecipeRequest, Recipe>();
+            CreateMap<UpdateRecipeRequest, Recipe>();
             CreateMap<Category, CategoryModel>();
             CreateMap<Tag, TagModel>();
             CreateMap<Document, DocumentModel>();

@@ -10,8 +10,8 @@ namespace RecipeLewis.Services
         public List<RecipeModel> Search(string query);
         public RecipeModel? Get(RecipeId userId);
         public List<RecipeModel> GetAll();
-        public RecipeModel Create(CreateRecipeRequest request);
-        public RecipeModel Update(UpdateRecipeRequest request);
+        public RecipeModel Create(CreateRecipeRequest request, UserModel currentUser);
+        public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser);
         public void Delete(RecipeId id);
     }
 }
