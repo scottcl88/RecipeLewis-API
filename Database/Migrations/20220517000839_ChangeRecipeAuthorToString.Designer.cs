@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220517000839_ChangeRecipeAuthorToString")]
+    partial class ChangeRecipeAuthorToString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,10 @@ namespace Database.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
@@ -52,6 +58,9 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RecipeId")
+                        .HasColumnType("int");
+
                     b.HasKey("CategoryId");
 
                     b.HasIndex("CreatedByUserId");
@@ -60,45 +69,9 @@ namespace Database.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("Categories");
+                    b.HasIndex("RecipeId");
 
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9965),
-                            Name = "Any"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9983),
-                            Name = "Breakfast"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9989),
-                            Name = "Lunch"
-                        },
-                        new
-                        {
-                            CategoryId = 4,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9994),
-                            Name = "Dinner"
-                        },
-                        new
-                        {
-                            CategoryId = 5,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 247, DateTimeKind.Utc),
-                            Name = "Snack"
-                        },
-                        new
-                        {
-                            CategoryId = 6,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 247, DateTimeKind.Utc).AddTicks(6),
-                            Name = "Desert"
-                        });
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Database.Document", b =>
@@ -229,9 +202,6 @@ namespace Database.Migrations
                     b.Property<string>("Author")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<TimeSpan?>("CookTime")
                         .HasColumnType("time");
 
@@ -284,8 +254,6 @@ namespace Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RecipeId");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -483,6 +451,10 @@ namespace Database.Migrations
                         .WithMany()
                         .HasForeignKey("ModifiedByUserId");
 
+                    b.HasOne("Database.Recipe", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("RecipeId");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
@@ -526,12 +498,6 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Recipe", b =>
                 {
-                    b.HasOne("Database.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Database.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
@@ -543,8 +509,6 @@ namespace Database.Migrations
                     b.HasOne("Database.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedByUserId");
-
-                    b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
 
@@ -587,6 +551,8 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Recipe", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Documents");
 
                     b.Navigation("Tags");

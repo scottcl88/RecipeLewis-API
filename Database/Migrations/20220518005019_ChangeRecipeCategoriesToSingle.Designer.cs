@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220518005019_ChangeRecipeCategoriesToSingle")]
+    partial class ChangeRecipeCategoriesToSingle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,10 @@ namespace Database.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
@@ -61,44 +67,6 @@ namespace Database.Migrations
                     b.HasIndex("ModifiedByUserId");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9965),
-                            Name = "Any"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9983),
-                            Name = "Breakfast"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9989),
-                            Name = "Lunch"
-                        },
-                        new
-                        {
-                            CategoryId = 4,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 246, DateTimeKind.Utc).AddTicks(9994),
-                            Name = "Dinner"
-                        },
-                        new
-                        {
-                            CategoryId = 5,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 247, DateTimeKind.Utc),
-                            Name = "Snack"
-                        },
-                        new
-                        {
-                            CategoryId = 6,
-                            CreatedDateTime = new DateTime(2022, 5, 18, 14, 5, 59, 247, DateTimeKind.Utc).AddTicks(6),
-                            Name = "Desert"
-                        });
                 });
 
             modelBuilder.Entity("Database.Document", b =>

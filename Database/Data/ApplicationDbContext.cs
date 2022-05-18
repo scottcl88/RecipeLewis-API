@@ -19,6 +19,8 @@ namespace Database
         {
             base.OnModelCreating(modelBuilder);
 
+            SeedCategories(modelBuilder);
+
             var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
                                                     v => v.ToUniversalTime(),
                                                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
@@ -46,6 +48,16 @@ namespace Database
                     }
                 }
             }
+        }
+
+        private void SeedCategories(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 1, Name = "Any" });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 2, Name = "Breakfast" });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 3, Name = "Lunch" });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 4, Name = "Dinner" });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 5, Name = "Snack" });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Desert" });
         }
     }
 }

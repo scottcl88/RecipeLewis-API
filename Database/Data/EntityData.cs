@@ -5,6 +5,10 @@ namespace Database;
 
 public class EntityData
 {
+    public EntityData()
+    {
+        CreatedDateTime = DateTime.UtcNow;
+    }
     [Required]
     [Display(Name = "Created Date")]
     public DateTime CreatedDateTime { get; set; }

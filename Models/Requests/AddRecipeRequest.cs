@@ -5,7 +5,7 @@ namespace RecipeLewis.Models.Requests;
 public class CreateRecipeRequest
 {
     public string? Title { get; set; }
-    public UserModel? Author { get; set; }
+    public string? Author { get; set; }
     public string? Description { get; set; }
     public string? Storage { get; set; }
     public string? Ingredients { get; set; }
@@ -16,7 +16,7 @@ public class CreateRecipeRequest
     public int? Servings { get; set; }
     public string? Yield { get; set; }
     public string? Nutrition { get; set; }
-    public List<CategoryModel> Categories { get; set; } = new List<CategoryModel>();
+    public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
     public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
 }
@@ -35,7 +35,7 @@ public class UpdateRecipeRequest
     public int? Servings { get; set; }
     public string? Yield { get; set; }
     public string? Nutrition { get; set; }
-    public List<CategoryModel> Categories { get; set; } = new List<CategoryModel>();
+    public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
     public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
 }

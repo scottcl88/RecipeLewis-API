@@ -38,6 +38,24 @@ namespace RecipeLewis.Controllers
             _logService = logService;
         }
 
+        private readonly string[] categories = { "None", "Breakfast", "Snack", "Dinner", "Desert" };
+
+        [HttpGet("categories")]
+        [SwaggerOperation(Summary = "Get all categories")]
+        public List<CategoryModel> GetCategories()
+        {
+            try
+            {
+                var list = categories.Select(x => new CategoryModel(x)).ToList();
+                return list;
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "Error on Get", UserId, new { UserId });
+                throw;
+            }
+        }
+
         [HttpGet("search/{query}")]
         [SwaggerOperation(Summary = "Search for recipes")]
         public List<RecipeModel> Search(string query)
