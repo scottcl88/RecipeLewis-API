@@ -67,6 +67,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<LogService>();
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IRecipeService, RecipeService>();
+    services.AddScoped<ICategoryService, CategoryService>();
     services.AddScoped<IEmailService, EmailService>();
 }
 

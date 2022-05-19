@@ -26,19 +26,19 @@ namespace RecipeLewis.Controllers
     public class RecipeController : BaseController
     {
         private readonly IRecipeService _recipeService;
+        private readonly ICategoryService _categoryService;
         private readonly LogService _logService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public RecipeController(IMapper mapper, IConfiguration configuration, IRecipeService recipeService, LogService logService, IHostEnvironment environment) : base(environment)
+        public RecipeController(IMapper mapper, IConfiguration configuration, IRecipeService recipeService, ICategoryService categoryService, LogService logService, IHostEnvironment environment) : base(environment)
         {
             _mapper = mapper;
             _configuration = configuration;
             _recipeService = recipeService;
             _logService = logService;
+            _categoryService = categoryService;
         }
-
-        private readonly string[] categories = { "None", "Breakfast", "Snack", "Dinner", "Desert" };
 
         [HttpGet("categories")]
         [SwaggerOperation(Summary = "Get all categories")]
@@ -46,7 +46,7 @@ namespace RecipeLewis.Controllers
         {
             try
             {
-                var list = categories.Select(x => new CategoryModel(x)).ToList();
+                var list = _categoryService.GetAll();
                 return list;
             }
             catch (Exception ex)
