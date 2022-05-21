@@ -28,6 +28,13 @@ public class RecipeService : IRecipeService
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.CreatedBy = user;
 
+        var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
+        if(foundCategory == null)
+        {
+            foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == 1);
+        }
+        recipe.Category = foundCategory;
+
         // save recipe
         _dbContext.Recipes.Add(recipe);
         _dbContext.SaveChanges();
@@ -38,11 +45,20 @@ public class RecipeService : IRecipeService
     public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser)
     {
         var recipe = getRecipeById(request.Id);
-
-        _mapper.Map(request, recipe);
+        if(recipe == null)
+        {
+            throw new AppException("Recipe not found");
+        }
+        recipe = _mapper.Map(request, recipe);
         recipe.ModifiedDateTime = DateTime.UtcNow;
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.ModifiedBy = user;
+        var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
+        if (foundCategory == null)
+        {
+            foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == 1);
+        }
+        recipe.Category = foundCategory;
         _dbContext.Recipes.Update(recipe);
         _dbContext.SaveChanges();
 

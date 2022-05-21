@@ -24,7 +24,7 @@ public class UpdateRecipeRequest
 {
     public RecipeId Id { get; set; }
     public string? Title { get; set; }
-    public UserModel? Author { get; set; }
+    public string? Author { get; set; }
     public string? Description { get; set; }
     public string? Storage { get; set; }
     public string? Ingredients { get; set; }
