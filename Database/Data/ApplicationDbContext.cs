@@ -14,6 +14,7 @@ namespace Database
         public DbSet<User> Users { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,12 +53,13 @@ namespace Database
 
         private void SeedCategories(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 1, Name = "Any" });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 2, Name = "Breakfast" });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 3, Name = "Lunch" });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 4, Name = "Dinner" });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 5, Name = "Snack" });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Desert" });
+            var date = new DateTime(2022, 5, 23, 0, 0, 0, DateTimeKind.Utc);
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 1, Name = "Any", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 2, Name = "Breakfast", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 3, Name = "Lunch", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 4, Name = "Dinner", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 5, Name = "Snack", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Desert", CreatedDateTime = date });
         }
     }
 }

@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220523185812_RemovingTagAlias")]
+    partial class RemovingTagAlias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,37 +68,37 @@ namespace Database.Migrations
                         new
                         {
                             CategoryId = 1,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9080),
                             Name = "Any"
                         },
                         new
                         {
                             CategoryId = 2,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9100),
                             Name = "Breakfast"
                         },
                         new
                         {
                             CategoryId = 3,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9106),
                             Name = "Lunch"
                         },
                         new
                         {
                             CategoryId = 4,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9111),
                             Name = "Dinner"
                         },
                         new
                         {
                             CategoryId = 5,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9149),
                             Name = "Snack"
                         },
                         new
                         {
                             CategoryId = 6,
-                            CreatedDateTime = new DateTime(2022, 5, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedDateTime = new DateTime(2022, 5, 23, 18, 58, 12, 534, DateTimeKind.Utc).AddTicks(9157),
                             Name = "Desert"
                         });
                 });
@@ -253,13 +255,7 @@ namespace Database.Migrations
                     b.Property<string>("Directions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DirectionsHTML")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Ingredients")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IngredientsHTML")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedByUserId")
@@ -397,7 +393,7 @@ namespace Database.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Database.User", b =>

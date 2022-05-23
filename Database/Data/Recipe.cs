@@ -14,6 +14,8 @@ namespace Database
         public string? Storage { get; set; }
         public string? Ingredients { get; set; }
         public string? Directions { get; set; }
+        public string? IngredientsHTML { get; set; }
+        public string? DirectionsHTML { get; set; }
         public TimeSpan? CookTime { get; set; }
         public TimeSpan? PrepTime { get; set; }
         public TimeSpan? TotalTime { get; set; }

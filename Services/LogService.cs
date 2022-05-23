@@ -49,6 +49,10 @@ namespace RecipeLewis.Services
 
         public async Task<bool> AddLog(NgxLog ngxLog, UserId userId)
         {
+            if (userId == null)
+            {
+                userId = new UserId(0);
+            }
             var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
 
             var newLog = new Log()
@@ -70,6 +74,10 @@ namespace RecipeLewis.Services
 
         public bool Debug(string message, UserId userId, object? requestData = null)
         {
+            if (userId == null)
+            {
+                userId = new UserId(0);
+            }
             var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()
             {
@@ -88,6 +96,10 @@ namespace RecipeLewis.Services
 
         public bool Info(string message, UserId userId, object? requestData = null)
         {
+            if (userId == null)
+            {
+                userId = new UserId(0);
+            }
             var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()
             {
@@ -106,6 +118,10 @@ namespace RecipeLewis.Services
 
         public bool Error(string message, UserId userId, object? requestData = null)
         {
+            if(userId == null)
+            {
+                userId = new UserId(0);
+            }
             var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             RejectChanges();
             var newLog = new Log()
@@ -125,6 +141,10 @@ namespace RecipeLewis.Services
 
         public bool Error(Exception exception, string message, UserId userId, object? requestData = null)
         {
+            if (userId == null)
+            {
+                userId = new UserId(0);
+            }
             RejectChanges();
             var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value);
             var newLog = new Log()

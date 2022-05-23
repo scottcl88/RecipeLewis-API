@@ -29,7 +29,7 @@ public class RecipeService : IRecipeService
         recipe.CreatedBy = user;
 
         var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
-        if(foundCategory == null)
+        if (foundCategory == null)
         {
             foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == 1);
         }
@@ -45,7 +45,7 @@ public class RecipeService : IRecipeService
     public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser)
     {
         var recipe = getRecipeById(request.Id);
-        if(recipe == null)
+        if (recipe == null)
         {
             throw new AppException("Recipe not found");
         }
@@ -53,6 +53,7 @@ public class RecipeService : IRecipeService
         recipe.ModifiedDateTime = DateTime.UtcNow;
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.ModifiedBy = user;
+        recipe.Tags = GetDBTags(request.Tags, request.Id, user);
         var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
         if (foundCategory == null)
         {
@@ -65,10 +66,57 @@ public class RecipeService : IRecipeService
         return _mapper.Map<RecipeModel>(recipe);
     }
 
-    public void Delete(RecipeId id)
+    private List<Tag> GetDBTags(List<TagModel> tagModels, RecipeId recipeId, User? user)
+    {
+        var recipe = getRecipeById(recipeId);
+        List<Tag> tags = recipe.Tags;
+        for(int i = tags.Count - 1; i >= 0; i--)
+        {
+            var currentTag = tags[i];
+            var newTag = tagModels.FirstOrDefault(x => x.TagId == currentTag.TagId && x.Name == currentTag.Name);
+            if (newTag == null)
+            {
+                //tag deleted
+                tags.Remove(currentTag);
+            }
+            else
+            {
+                //tag not changed
+                tagModels.Remove(newTag);
+            }
+        }
+
+        //Attempt to get/find tag from remaining model list, otherwise create new tag
+        foreach (var tagModel in tagModels)
+        {
+            var dbTag = GetTag(tagModel.TagId);
+            if (dbTag == null)
+            {
+                dbTag = FindTag(tagModel.Name);
+                if (dbTag == null)
+                {
+                    dbTag = new Tag() { Name = tagModel.Name, CreatedBy = user };
+                }
+            }
+            tags.Add(dbTag);
+        }
+        return tags;
+    }
+    private Tag? GetTag(int tagId)
+    {
+        return _dbContext.Tags.FirstOrDefault(x => x.TagId == tagId && x.RecipeId == null);
+    }
+    private Tag? FindTag(string name)
+    {
+        return _dbContext.Tags.FirstOrDefault(x => x.Name == name && x.RecipeId == null);
+    }
+
+    public void Delete(RecipeId id, UserModel currentUser)
     {
         var recipe = getRecipeById(id);
-        _dbContext.Recipes.Remove(recipe);
+        var user = _userService.GetDbUserById(currentUser.UserId);
+        recipe.DeletedBy = user;
+        recipe.DeletedDateTime = DateTime.UtcNow;
         _dbContext.SaveChanges();
     }
     public List<RecipeModel> Search(string query)

@@ -19,7 +19,9 @@ namespace RecipeLewis.Business
             CreateMap<CreateRecipeRequest, RecipeModel>();
             CreateMap<UpdateRecipeRequest, RecipeModel>();
             CreateMap<CreateRecipeRequest, Recipe>();
-            CreateMap<UpdateRecipeRequest, Recipe>();
+            CreateMap<UpdateRecipeRequest, Recipe>()
+                .ForMember(x => x.Category, x => x.Ignore())
+                .ForMember(x => x.Tags, x => x.Ignore());
             CreateMap<Category, CategoryModel>();
             CreateMap<Tag, TagModel>();
             CreateMap<Document, DocumentModel>();

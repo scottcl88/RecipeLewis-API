@@ -132,6 +132,21 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete recipe by id")]
+        public ActionResult<bool> Delete(int id)
+        {
+            try
+            {
+                _recipeService.Delete(new RecipeId(id), User);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "Error on Delete", UserId, new { id, UserId });
+                throw;
+            }
+        }
 
     }
 }
