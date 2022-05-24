@@ -44,12 +44,14 @@ public class RecipeService : IRecipeService
 
     public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser)
     {
-        var recipe = getRecipeById(request.Id);
+        var recipe = GetRecipeById(request.Id);
         if (recipe == null)
         {
             throw new AppException("Recipe not found");
         }
+        var oldDocuments = recipe.Documents;
         recipe = _mapper.Map(request, recipe);
+        recipe.Documents = oldDocuments;
         recipe.ModifiedDateTime = DateTime.UtcNow;
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.ModifiedBy = user;
@@ -68,7 +70,7 @@ public class RecipeService : IRecipeService
 
     private List<Tag> GetDBTags(List<TagModel> tagModels, RecipeId recipeId, User? user)
     {
-        var recipe = getRecipeById(recipeId);
+        var recipe = GetRecipeById(recipeId);
         List<Tag> tags = recipe.Tags;
         for(int i = tags.Count - 1; i >= 0; i--)
         {
@@ -113,7 +115,7 @@ public class RecipeService : IRecipeService
 
     public void Delete(RecipeId id, UserModel currentUser)
     {
-        var recipe = getRecipeById(id);
+        var recipe = GetRecipeById(id);
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.DeletedBy = user;
         recipe.DeletedDateTime = DateTime.UtcNow;
@@ -123,28 +125,32 @@ public class RecipeService : IRecipeService
     {
         var recipes = _dbContext.Recipes.Where(x => x.Title.ToLower().Contains(query) && x.DeletedDateTime == null);
         var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
+        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));
         return recipeModels;
     }
     public List<RecipeModel> GetAll()
     {
         var recipes = _dbContext.Recipes.Where(x => x.DeletedDateTime == null);
         var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
+        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));      
         return recipeModels;
     }
 
     public RecipeModel? Get(RecipeId recipeId)
     {
-        var recipe = getRecipeById(recipeId);
+        var recipe = GetRecipeById(recipeId);
         var recipeModel = _mapper.Map<RecipeModel>(recipe);
+        recipeModel.Documents.RemoveAll(x => x.DeletedDateTime != null);
         return recipeModel;
     }
-    private Recipe? getRecipeById(RecipeId recipeId)
+    public Recipe? GetRecipeById(RecipeId recipeId)
     {
-        var user = _dbContext.Recipes.FirstOrDefault(x => x.RecipeId == recipeId.Value && x.DeletedDateTime == null);
-        if (user == null)
+        var recipe = _dbContext.Recipes.FirstOrDefault(x => x.RecipeId == recipeId.Value && x.DeletedDateTime == null);
+        if (recipe == null)
         {
             _logService.Error("getRecipeById failed - Unable to find recipe", null, new { recipeId });
+            throw new AppException($"getRecipeById failed - Unable to find recipe by Id '{recipeId?.Value}'");
         }
-        return user;
+        return recipe;
     }
 }

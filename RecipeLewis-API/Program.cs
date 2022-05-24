@@ -66,6 +66,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<LogService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IDocumentService, DocumentService>();
     services.AddScoped<IRecipeService, RecipeService>();
     services.AddScoped<ICategoryService, CategoryService>();
     services.AddScoped<IEmailService, EmailService>();
@@ -83,19 +84,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//    var testUser = new User
-//    {
-//        Name = "User",
-//        Username = "test",
-//        PasswordHash = BCrypt.Net.BCrypt.HashPassword("test")
-//    };
-//    context.Users.Add(testUser);
-//    context.SaveChanges();
-//}
 
 // global cors policy
 app.UseCors(x => x

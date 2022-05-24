@@ -27,15 +27,17 @@ namespace RecipeLewis.Controllers
     {
         private readonly IRecipeService _recipeService;
         private readonly ICategoryService _categoryService;
+        private readonly IDocumentService _documentService;
         private readonly LogService _logService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public RecipeController(IMapper mapper, IConfiguration configuration, IRecipeService recipeService, ICategoryService categoryService, LogService logService, IHostEnvironment environment) : base(environment)
+        public RecipeController(IMapper mapper, IConfiguration configuration, IDocumentService documentService, IRecipeService recipeService, ICategoryService categoryService, LogService logService, IHostEnvironment environment) : base(environment)
         {
             _mapper = mapper;
             _configuration = configuration;
             _recipeService = recipeService;
+            _documentService = documentService;
             _logService = logService;
             _categoryService = categoryService;
         }
@@ -124,6 +126,11 @@ namespace RecipeLewis.Controllers
             try
             {
                 var recipe = _recipeService.Update(request, User);
+                var deletedDocuments = _documentService.DeleteDocuments(request.DocumentsToDelete, request.Id, User);
+                if (!deletedDocuments)
+                {
+                    return StatusCode(500, "Failure deleting documents");
+                }
                 return Ok(recipe);
             }
             catch (Exception ex)

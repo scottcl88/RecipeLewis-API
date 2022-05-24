@@ -2,151 +2,133 @@
 using RecipeLewis.Business;
 using RecipeLewis.Models;
 using RecipeLewis.Services;
-using RecipeLewis.Models.Requests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using RestSharp;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Threading.Tasks;
+using Models.Results;
 
 namespace RecipeLewis.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/documents")]
     [EnableCors("MyPolicy")]
     public class DocumentController : BaseController
     {
         private readonly IConfiguration _configuration;
+        private readonly IDocumentService _documentService;
         private readonly LogService _logService;
+        private readonly string[] permittedExtensions = new string[] { ".txt", ".pdf", ".png", ".jpeg", ".jpg", ".gif", ".jfif" };
+        private readonly long _fileSizeLimit = 26214400;
 
-        public DocumentController(IConfiguration configuration, LogService logService, IHostEnvironment environment) : base(environment)
+        public DocumentController(IConfiguration configuration, IDocumentService documentService, LogService logService, IHostEnvironment environment) : base(environment)
         {
             _configuration = configuration;
             _logService = logService;
+            _documentService = documentService;
         }
-        public enum ResumeType
+
+        [HttpGet("download/{recipeId}/{documentId}")]
+        public FileResult? Download(int recipeId, int documentId)
         {
-            Unknown = 0,
-            Docx = 1,
-            HTML = 2,
-            PDF = 3,
-            RichText = 4,
-            Text = 5,
+            if (recipeId <= 0 || documentId <= 0) return null;
+            var doc = _documentService.Get(new RecipeId(recipeId), documentId);
+            return File(doc.Bytes, doc.ContentType, doc.FileName);
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        [Route("SCLewisResume")]
-        [SwaggerOperation(Summary = "Used to view my pdf resume")]
-        public ActionResult SCLewisResume()
+        [HttpGet("view/{recipeId}/{documentId}")]
+        public FileResult? View(int recipeId, int documentId)
         {
+            if (recipeId <= 0 || documentId <= 0) return null;
+            var doc = _documentService.Get(new RecipeId(recipeId), documentId);
+            return File(doc.Bytes, doc.ContentType);
+        }
+
+        [HttpPost("upload/multiple/{recipeId}")]
+        public async Task<ActionResult<List<UploadResult>>> Multiple([FromForm] IEnumerable<IFormFile> files, int recipeId)
+        {
+            List<UploadResult> uploadResults = new();
             try
             {
-                string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                _logService.Info("SCLewisResume called", UserId, new { ipAddress });
-                string filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.pdf";
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
-                var mimeType = GetMimeTypeForFileExtension(filePath);
-
-                var cd = new System.Net.Mime.ContentDisposition
+                List<DocumentModel> documentModels = new List<DocumentModel>();
+                foreach (var file in files)
                 {
-                    FileName = "Public_SCLewis_Resume.pdf",
-                    Inline = true,
-                };
-                Response.Headers.Add("Content-Disposition", cd.ToString());
-                return File(fileBytes, mimeType);
+                    var uploadResult = new UploadResult();
+
+                    var untrustedFileName = file.FileName;
+                    uploadResult.FileName = untrustedFileName;
+
+                    if (file.Length > 0)
+                    {
+                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                        if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+                        {
+                            uploadResult.ErrorCode = 2;
+                            uploadResult.Message = "Invalid file extension";
+                            uploadResults.Add(uploadResult);
+                            return StatusCode(500, uploadResults);
+                        }
+                        if (file.Length > _fileSizeLimit)
+                        {
+                            uploadResult.ErrorCode = 3;
+                            uploadResult.Message = "Invalid file size";
+                            uploadResults.Add(uploadResult);
+                            return StatusCode(500, uploadResults);
+                        }
+
+                        var documentKey = Guid.NewGuid();
+                        DateTime createdDate = DateTime.UtcNow;
+
+                        byte[] fileBytes = new byte[0];
+                        if (file.Length > 0)
+                        {
+                            using (var ms = file.OpenReadStream())
+                            {
+                                using (var ms2 = new MemoryStream())
+                                {
+                                    await ms.CopyToAsync(ms2);
+                                    fileBytes = ms2.ToArray();
+                                }
+                            }
+                        }
+                        uploadResult.Uploaded = true;
+                        uploadResults.Add(uploadResult);
+                        var documentModel = new DocumentModel()
+                        {
+                            ByteSize = (int)file.Length,
+                            Bytes = fileBytes,
+                            FileName = untrustedFileName,
+                            ContentType = file.ContentType,
+                            DocumentKey = documentKey,
+                            CreatedDateTime = createdDate,
+                        };
+                        documentModels.Add(documentModel);
+                    }
+                }
+                var result = _documentService.AddDocuments(documentModels, new RecipeId(recipeId), User);
+                if (!result)
+                {
+                    var uploadResult = new UploadResult();
+                    uploadResult.ErrorCode = 4;
+                    uploadResult.Message = "Failure saving documents";
+                    uploadResults.Add(uploadResult);
+                    return StatusCode(500, uploadResults);
+                }
+                return StatusCode(200, uploadResults);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error on SCLewisResume", UserId);
-                throw;
+                var uploadResult = new UploadResult();
+                uploadResult.ErrorCode = 4;
+                uploadResult.Message = ex.Message;
+                uploadResults.Add(uploadResult);
+                return StatusCode(500, uploadResults);
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("DownloadResume")]
-        [SwaggerOperation(Summary = "Used to download my resume")]
-        public async Task<FileResult> DownloadResume(ResumeType resumeType)
-        {
-            try
-            {
-                string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                _logService.Info("DownloadResume called", UserId, new { ipAddress });
-                string recaptchaToken = Request.Headers["RecaptchaToken"];
-                if (!HostingEnvironment.IsDevelopment() || (HostingEnvironment.IsDevelopment() && !string.IsNullOrWhiteSpace(recaptchaToken)))
-                {
-                    var recaptchaResponse = await Business.GoogleRecaptcha.Verify(_configuration, recaptchaToken, false);
-                    if (recaptchaResponse.IsSuccessful)
-                    {
-                        var result = JsonConvert.DeserializeObject<GoogleRecaptchaSiteVeirfyModel>(recaptchaResponse.Content);
-                        if (result.Score < 0.5)
-                        {
-                            _logService.Error("DownloadResume recaptcha too low", UserId);
-                            throw new RecaptchaException();
-                        }
-                    }
-                    else
-                    {
-                        _logService.Error("DownloadResume failed to verify recaptcha", UserId, new { recaptchaResponse?.IsSuccessful, recaptchaResponse?.StatusCode, recaptchaResponse.Content });
-                        throw new RecaptchaException();
-                    }
-                }
-                string filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.docx";
-                string extension = ".docx";
-                switch (resumeType)
-                {
-                    case ResumeType.HTML:
-                        {
-                            extension = ".html";
-                            filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.html";
-                            break;
-                        }
-                    case ResumeType.PDF:
-                        {
-                            extension = ".pdf";
-                            filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.pdf";
-                            break;
-                        }
-                    case ResumeType.RichText:
-                        {
-                            extension = ".rtf";
-                            filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.rtf";
-                            break;
-                        }
-                    case ResumeType.Text:
-                        {
-                            extension = ".txt";
-                            filePath = Directory.GetCurrentDirectory() + "/Public_SCLewis_Resume.txt";
-                            break;
-                        }
-                }
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
-                var mimeType = GetMimeTypeForFileExtension(filePath);
-                return File(fileBytes, mimeType, "SCLewis_Resume" + extension);
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "Error on DownloadResume", UserId);
-                throw;
-            }
-        }
+
         private string GetMimeTypeForFileExtension(string filePath)
         {
             const string DefaultContentType = "application/octet-stream";

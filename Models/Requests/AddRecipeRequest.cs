@@ -20,7 +20,6 @@ public class CreateRecipeRequest
     public string? Nutrition { get; set; }
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
-    public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
 }
 public class UpdateRecipeRequest
 {
@@ -41,5 +40,5 @@ public class UpdateRecipeRequest
     public string? Nutrition { get; set; }
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
-    public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
+    public List<DocumentModel> DocumentsToDelete { get; set; } = new List<DocumentModel>();
 }
