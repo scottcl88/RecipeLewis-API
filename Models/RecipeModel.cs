@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Ganss.XSS;
+using System.Text.Json.Serialization;
 
 namespace RecipeLewis.Models;
 
@@ -23,4 +24,12 @@ public class RecipeModel : EntityDataUserModel
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
     public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
+    public void SanitizeHtml()
+    {
+        var sanitizer = new HtmlSanitizer();
+        var unsafeHTML = this.IngredientsHTML;
+        this.IngredientsHTML = sanitizer.Sanitize(unsafeHTML);
+        unsafeHTML = this.DirectionsHTML;
+        this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML);
+    }
 }

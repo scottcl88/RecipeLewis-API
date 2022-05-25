@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Threading.Tasks;
 using RecipeLewis.Models.Results;
+using Ganss.XSS;
 
 namespace RecipeLewis.Controllers
 {
@@ -65,6 +66,7 @@ namespace RecipeLewis.Controllers
             try
             {
                 var foundRecipes = _recipeService.Search(query);
+                foundRecipes.ForEach(x => x.SanitizeHtml());
                 return foundRecipes;
             }
             catch (Exception ex)
@@ -80,6 +82,7 @@ namespace RecipeLewis.Controllers
             try
             {
                 var foundRecipes = _recipeService.GetAll();
+                foundRecipes.ForEach(x => x.SanitizeHtml());
                 return foundRecipes;
             }
             catch (Exception ex)
@@ -96,6 +99,7 @@ namespace RecipeLewis.Controllers
             try
             {
                 var foundRecipe = _recipeService.Get(new RecipeId(id));
+                foundRecipe?.SanitizeHtml();
                 return foundRecipe;
             }
             catch (Exception ex)
@@ -110,6 +114,7 @@ namespace RecipeLewis.Controllers
         {
             try
             {
+                request.SanitizeHtml();
                 var recipe = _recipeService.Create(request, User);
                 return Ok(recipe);
             }
@@ -125,6 +130,7 @@ namespace RecipeLewis.Controllers
         {
             try
             {
+                request.SanitizeHtml();
                 var recipe = _recipeService.Update(request, User);
                 var deletedDocuments = _documentService.DeleteDocuments(request.DocumentsToDelete, request.Id, User);
                 if (!deletedDocuments)
