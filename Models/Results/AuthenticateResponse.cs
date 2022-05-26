@@ -6,7 +6,7 @@ public class AuthenticateResponse
     public UserId UserId { get; set; }
     public string? Name { get; set; }
     public string? Email { get; set; }
-    public Role? Role { get; set; }
+    public Role Role { get; set; }
     public bool IsVerified { get; set; }
     public string? Token { get; set; }
 
@@ -18,7 +18,7 @@ public class AuthenticateResponse
         UserId = user.UserId;
         Email = user.Email;
         Name = user?.Name;
-        Role = user?.Role;
+        Role = user.Role;
         Token = jwtToken;
         RefreshToken = refreshToken;
     }

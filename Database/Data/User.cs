@@ -7,8 +7,10 @@ using System.Text.Json.Serialization;
 namespace Database;
 public enum Role
 {
-    Admin,
-    User
+    Unknown,
+    User,
+    Editor,
+    Admin
 }
 public class User : EntityData
 {
@@ -31,6 +33,8 @@ public class User : EntityData
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
     public DateTime? PasswordReset { get; set; }
+    public bool RequestedAccess { get; set; }
+    public DateTime? RequestedAccessExpires { get; set; }
 
     [JsonIgnore]
     public virtual List<RefreshToken> RefreshTokens { get; set; }

@@ -46,6 +46,8 @@ public class UserService : IUserService
         var refreshToken = _jwtUtils.GenerateRefreshToken(ipAddress);
         user.RefreshTokens.Add(refreshToken);
 
+        user.LastLogin = DateTime.UtcNow;
+
         // remove old refresh tokens from user
         removeOldRefreshTokens(user);
 
@@ -232,6 +234,19 @@ public class UserService : IUserService
         _dbContext.SaveChanges();
     }
 
+    public void RequestEditAccess(UserId userId)
+    {
+        var user = GetDbUserById(userId);
+
+        user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
+        user.RequestedAccess = true;
+
+        _dbContext.Users.Update(user);
+        _dbContext.SaveChanges();
+
+        sendRequestEditAccessEmail(user);
+    }
+
     public UserModel Create(CreateUserRequest request)
     {
         // validate
@@ -382,6 +397,19 @@ public class UserService : IUserService
                         {message}"
         );
     }
+
+    private void sendRequestEditAccessEmail(User user)
+    {
+        string message;
+        message = $@"<p>The user {user.Email} has requested edit access. UserId = {user.UserId}</p>";
+        _emailService.Send(
+            to: user.Email,
+            subject: "Access Requested",
+            html: $@"<h4>Access Requested</h4>
+                        {message}"
+        );
+    }
+
     public List<UserModel> SearchUsers(UserId userId, string query)
     {
         var users = _dbContext.Users.Where(x => x.UserId != userId.Value && (x.Name.ToLower().Contains(query) || x.Email.ToLower().Contains(query)) && x.DeletedDateTime == null);

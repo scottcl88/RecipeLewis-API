@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Threading.Tasks;
 using RecipeLewis.Models.Results;
+using Models.Results;
 
 namespace RecipeLewis.Controllers
 {
@@ -131,10 +132,10 @@ namespace RecipeLewis.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest model)
+        public ActionResult<GenericResult> Register(RegisterRequest model)
         {
             _userService.Register(model, ipAddress(), Request.Headers["origin"]);
-            return Ok(new { message = "Registration successful, please check your email for verification instructions" });
+            return Ok(new GenericResult { Success = true, Message = "Registration successful, please check your email for verification instructions" });
         }
 
         [AllowAnonymous]
@@ -143,6 +144,14 @@ namespace RecipeLewis.Controllers
         {
             _userService.VerifyEmail(model.Token);
             return Ok(new { message = "Verification successful, you can now login" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("request-edit-access")]
+        public ActionResult<GenericResult> RequestEditAccess()
+        {
+            _userService.RequestEditAccess(UserId);
+            return Ok(new GenericResult { Success = true, Message = "Access request sent" });
         }
 
         [AllowAnonymous]

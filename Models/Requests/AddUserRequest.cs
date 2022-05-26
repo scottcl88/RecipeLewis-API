@@ -66,6 +66,7 @@ public class ResetPasswordRequest
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 }
+
 public class UpdateUserRequest
 {
     private string _password;

@@ -22,5 +22,6 @@ namespace RecipeLewis.Services
         public void ForgotPassword(ForgotPasswordRequest request, string origin);
         public void VerifyEmail(string token);
         public void Register(RegisterRequest request, string ipAddress, string origin);
+        public void RequestEditAccess(UserId userId);
     }
 }

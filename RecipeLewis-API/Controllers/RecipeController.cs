@@ -75,6 +75,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+        [AllowAnonymous]
         [HttpGet("get-all")]
         [SwaggerOperation(Summary = "Get all recipes")]
         public List<RecipeModel> GetAll(int id)

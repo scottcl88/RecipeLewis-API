@@ -3,8 +3,10 @@
 namespace RecipeLewis.Models;
 public enum Role
 {
-    Admin,
-    User
+    Unknown,
+    User,
+    Editor,
+    Admin
 }
 public record class UserId(int Value);
 
@@ -20,6 +22,8 @@ public class UserModel : EntityDataModel
     public string? Email { get; set; }
     public string? Name { get; set; }
     public Role Role { get; set; }
+    public bool RequestedAccess { get; set; }
+    public DateTime? RequestedAccessExpires { get; set; }
     [JsonIgnore]
     public List<RefreshTokenModel>? RefreshTokens { get; set; }
     public bool OwnsToken(string token)
