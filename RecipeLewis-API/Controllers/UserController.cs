@@ -59,16 +59,33 @@ namespace RecipeLewis.Controllers
         [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpGet("user")]
         [SwaggerOperation(Summary = "Get the currently signed in user")]
-        public UserModel GetUser()
+        public UserModel? GetUser()
         {
             try
             {
                 var user = _userService.GetUser(UserId);
-                return _mapper.Map<UserModel>(user);
+                return user;
             }
             catch (Exception ex)
             {
                 _logService.Error(ex, "Error on GetUser", UserId);
+                throw;
+            }
+        }
+
+        [Authorize(Role.Admin)]
+        [HttpGet("get-all")]
+        [SwaggerOperation(Summary = "Get all non-deleted users")]
+        public List<UserModel> GetAll()
+        {
+            try
+            {
+                var users = _userService.GetAll();
+                return users;
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "Error on GetAll", UserId);
                 throw;
             }
         }
@@ -81,7 +98,7 @@ namespace RecipeLewis.Controllers
             try
             {
                 var user = _userService.GetUserByGUID(userGUID, UserId);
-                return _mapper.Map<UserModel>(user);
+                return user;
             }
             catch (Exception ex)
             {
@@ -206,6 +223,22 @@ namespace RecipeLewis.Controllers
             var account = _userService.Update(new UserId(model.UserId), model);
             return Ok(account);
         }
+
+        [Authorize(Role.Admin)]
+        [HttpPost("promote/{userId:int}")]
+        public ActionResult<UserModel> Promote(int userId)
+        {
+            var account = _userService.Promote(new UserId(userId), UserId);
+            return Ok(account);
+        }
+        [Authorize(Role.Admin)]
+        [HttpPost("demote/{userId:int}")]
+        public ActionResult<UserModel> Demote(int userId)
+        {
+            var account = _userService.Demote(new UserId(userId), UserId);
+            return Ok(account);
+        }
+
 
         // helper methods
 

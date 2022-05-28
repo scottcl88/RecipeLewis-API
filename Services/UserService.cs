@@ -287,6 +287,40 @@ public class UserService : IUserService
         return _mapper.Map<UserModel>(user);
     }
 
+    public UserModel Promote(UserId id, UserId? currentUser)
+    {
+        var user = GetDbUserById(id);
+        if (user == null)
+        {
+            throw new AppException("Cannot find user to promote");
+        }
+        var currentRole = user.Role;
+        var roleValue = (int)currentRole;
+        var prommoteValue = roleValue + 1;
+        var newRole = (Database.Role)(prommoteValue);
+        user.Role = newRole;
+        user.ModifiedDateTime = DateTime.UtcNow;
+        _dbContext.SaveChanges();
+        _logService.Info($"User {id.Value} promoted to {newRole} by User {currentUser?.Value}", currentUser);
+        return _mapper.Map<UserModel>(user);
+    }
+    public UserModel Demote(UserId id, UserId? currentUser)
+    {
+        var user = GetDbUserById(id);
+        if(user == null)
+        {
+            throw new AppException("Cannot find user to demote");
+        }
+        var currentRole = user.Role;
+        var roleValue = (int)currentRole;
+        var demoteValue = roleValue - 1;
+        var newRole = (Database.Role)(demoteValue);
+        user.Role = newRole;
+        user.ModifiedDateTime = DateTime.UtcNow;
+        _dbContext.SaveChanges();
+        _logService.Info($"User {id.Value} demoted to {newRole} by User {currentUser?.Value}", currentUser);
+        return _mapper.Map<UserModel>(user);
+    }
     public void Delete(UserId id)
     {
         var user = GetDbUserById(id);
@@ -411,6 +445,12 @@ public class UserService : IUserService
     public List<UserModel> SearchUsers(UserId userId, string query)
     {
         var users = _dbContext.Users.Where(x => x.UserId != userId.Value && (x.Name.ToLower().Contains(query) || x.Email.ToLower().Contains(query)) && x.DeletedDateTime == null);
+        var userModels = _mapper.Map<List<UserModel>>(users.ToList());
+        return userModels;
+    }
+    public List<UserModel> GetAll()
+    {
+        var users = _dbContext.Users.Where(x => x.DeletedDateTime == null);
         var userModels = _mapper.Map<List<UserModel>>(users.ToList());
         return userModels;
     }

@@ -47,7 +47,7 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public async Task<bool> AddLog(NgxLog ngxLog, UserId userId)
+        public async Task<bool> AddLog(NgxLog ngxLog, UserId? userId)
         {
             if (userId == null)
             {
@@ -72,7 +72,7 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Debug(string message, UserId userId, object? requestData = null)
+        public bool Debug(string message, UserId? userId, object? requestData = null)
         {
             if (userId == null)
             {
@@ -94,7 +94,7 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Info(string message, UserId userId, object? requestData = null)
+        public bool Info(string message, UserId? userId, object? requestData = null)
         {
             if (userId == null)
             {
@@ -116,7 +116,7 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Error(string message, UserId userId, object? requestData = null)
+        public bool Error(string message, UserId? userId, object? requestData = null)
         {
             if(userId == null)
             {
@@ -139,7 +139,7 @@ namespace RecipeLewis.Services
             return true;
         }
 
-        public bool Error(Exception exception, string message, UserId userId, object? requestData = null)
+        public bool Error(Exception exception, string message, UserId? userId, object? requestData = null)
         {
             if (userId == null)
             {
