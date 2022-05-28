@@ -166,9 +166,7 @@ public class UserService : IUserService
         var user = _mapper.Map<User>(request);
         user.LastIPAddress = ipAddress;
 
-        // first registered user is an admin
-        var isFirstuser = _dbContext.Users.Count() == 0;
-        user.Role = isFirstuser ? Database.Role.Admin : Database.Role.User;
+        user.Role = Database.Role.User;
         user.CreatedDateTime = DateTime.UtcNow;
         user.VerificationToken = generateVerificationToken();
 
@@ -238,7 +236,7 @@ public class UserService : IUserService
     {
         var user = GetDbUserById(userId);
 
-        user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
+        user.RequestedAccessExpires = DateTime.UtcNow.AddDays(7);
         user.RequestedAccess = true;
 
         _dbContext.Users.Update(user);
@@ -337,7 +335,7 @@ public class UserService : IUserService
         {
             // origin exists if request sent from browser single page app (e.g. Angular or React)
             // so send link to verify via single page app
-            var verifyUrl = $"{origin}/user/verify-email?token={user.VerificationToken}";
+            var verifyUrl = $"{origin}/verify-email?token={user.VerificationToken}";
             message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
         }
@@ -345,7 +343,7 @@ public class UserService : IUserService
         {
             // origin missing if request sent directly to api (e.g. from Postman)
             // so send instructions to verify directly with api
-            message = $@"<p>Please use the below token to verify your email address with the <code>/users/verify-email</code> api route:</p>
+            message = $@"<p>Please use the below token to verify your email address with the <code>/verify-email</code> api route:</p>
                             <p><code>{user.VerificationToken}</code></p>";
         }
 
@@ -362,9 +360,9 @@ public class UserService : IUserService
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
-            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/user/forgot-password"">forgot password</a> page.</p>";
+            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/forgot-password"">forgot password</a> page.</p>";
         else
-            message = "<p>If you don't know your password you can reset it via the <code>/users/forgot-password</code> api route.</p>";
+            message = "<p>If you don't know your password you can reset it via the <code>/forgot-password</code> api route.</p>";
 
         _emailService.Send(
             to: email,
@@ -380,7 +378,7 @@ public class UserService : IUserService
         string message;
         if (!string.IsNullOrEmpty(origin))
         {
-            var resetUrl = $"{origin}/user/reset-password?token={user.ResetToken}";
+            var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
             message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                             <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
         }

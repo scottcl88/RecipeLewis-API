@@ -8,6 +8,7 @@ public class AuthenticateResponse
     public string? Email { get; set; }
     public Role Role { get; set; }
     public bool IsVerified { get; set; }
+    public bool RequestedAccess { get; set; }
     public string? Token { get; set; }
 
     [JsonIgnore] // refresh token is returned in http only cookie
@@ -19,6 +20,7 @@ public class AuthenticateResponse
         Email = user.Email;
         Name = user?.Name;
         Role = user.Role;
+        RequestedAccess = user.RequestedAccess;
         Token = jwtToken;
         RefreshToken = refreshToken;
     }

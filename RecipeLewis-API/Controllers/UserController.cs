@@ -39,6 +39,7 @@ namespace RecipeLewis.Controllers
             _logService = logService;
         }
 
+        [Authorize(Role.Admin)]
         [HttpGet("search/{query}")]
         [SwaggerOperation(Summary = "Search for users by email or name")]
         public List<UserModel> Search(string query)
@@ -55,6 +56,7 @@ namespace RecipeLewis.Controllers
             }
         }
 
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpGet("user")]
         [SwaggerOperation(Summary = "Get the currently signed in user")]
         public UserModel GetUser()
@@ -71,6 +73,7 @@ namespace RecipeLewis.Controllers
             }
         }
 
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpGet("guid")]
         [SwaggerOperation(Summary = "Get the user by guid")]
         public UserModel GetUserByGUID([Required] Guid userGUID)
@@ -106,6 +109,7 @@ namespace RecipeLewis.Controllers
             return Ok(response);
         }
 
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpPost("revoke-token")]
         public IActionResult RevokeToken(RevokeTokenRequest model)
         {
@@ -123,6 +127,7 @@ namespace RecipeLewis.Controllers
             return Ok(new { message = "Token revoked" });
         }
 
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpGet("refresh-tokens/{id}")]
         public IActionResult GetRefreshTokens(int id)
         {
@@ -132,21 +137,21 @@ namespace RecipeLewis.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public ActionResult<GenericResult> Register(RegisterRequest model)
+        public ActionResult<GenericResult> Register(RegisterRequest request)
         {
-            _userService.Register(model, ipAddress(), Request.Headers["origin"]);
+            _userService.Register(request, ipAddress(), Request.Headers["origin"]);
             return Ok(new GenericResult { Success = true, Message = "Registration successful, please check your email for verification instructions" });
         }
 
         [AllowAnonymous]
         [HttpPost("verify-email")]
-        public IActionResult VerifyEmail(VerifyEmailRequest model)
+        public ActionResult<GenericResult> VerifyEmail(VerifyEmailRequest request)
         {
-            _userService.VerifyEmail(model.Token);
-            return Ok(new { message = "Verification successful, you can now login" });
+            _userService.VerifyEmail(request.Token);
+            return Ok(new GenericResult { Success = true, Message = "Verification successful, you can now login" });
         }
 
-        [AllowAnonymous]
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpPost("request-edit-access")]
         public ActionResult<GenericResult> RequestEditAccess()
         {
@@ -156,26 +161,26 @@ namespace RecipeLewis.Controllers
 
         [AllowAnonymous]
         [HttpPost("forgot-password")]
-        public IActionResult ForgotPassword(ForgotPasswordRequest model)
+        public ActionResult<GenericResult> ForgotPassword(ForgotPasswordRequest model)
         {
             _userService.ForgotPassword(model, Request.Headers["origin"]);
-            return Ok(new { message = "Please check your email for password reset instructions" });
+            return Ok(new GenericResult { Success = true, Message = "Please check your email for password reset instructions" });
         }
 
         [AllowAnonymous]
         [HttpPost("validate-reset-token")]
-        public IActionResult ValidateResetToken(ValidateResetTokenRequest model)
+        public ActionResult<GenericResult> ValidateResetToken(ValidateResetTokenRequest model)
         {
             _userService.ValidateResetToken(model);
-            return Ok(new { message = "Token is valid" });
+            return Ok(new GenericResult { Success = true, Message = "Token is valid" });
         }
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public IActionResult ResetPassword(ResetPasswordRequest model)
+        public ActionResult<GenericResult> ResetPassword(ResetPasswordRequest model)
         {
             _userService.ResetPassword(model);
-            return Ok(new { message = "Password reset successful, you can now login" });
+            return Ok(new GenericResult { Success = true, Message = "Password reset successful, you can now login" });
         }
 
         [Authorize(Role.Admin)]
@@ -186,6 +191,7 @@ namespace RecipeLewis.Controllers
             return Ok(account);
         }
 
+        [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpPut("update/{id:int}")]
         public ActionResult<UserModel> Update(UpdateUserRequest model)
         {

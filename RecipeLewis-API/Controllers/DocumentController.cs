@@ -28,6 +28,7 @@ namespace RecipeLewis.Controllers
             _documentService = documentService;
         }
 
+        [AllowAnonymous]
         [HttpGet("download/{recipeId}/{documentId}")]
         public FileResult? Download(int recipeId, int documentId)
         {
@@ -45,6 +46,7 @@ namespace RecipeLewis.Controllers
             return File(doc.Bytes, doc.ContentType);
         }
 
+        [Authorize(Role.Editor, Role.Admin)]
         [HttpPost("upload/multiple/{recipeId}")]
         public async Task<ActionResult<List<UploadResult>>> Multiple([FromForm] IEnumerable<IFormFile> files, int recipeId)
         {

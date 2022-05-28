@@ -43,6 +43,7 @@ namespace RecipeLewis.Controllers
             _categoryService = categoryService;
         }
 
+        [AllowAnonymous]
         [HttpGet("categories")]
         [SwaggerOperation(Summary = "Get all categories")]
         public List<CategoryModel> GetCategories()
@@ -59,6 +60,7 @@ namespace RecipeLewis.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("search/{query}")]
         [SwaggerOperation(Summary = "Search for recipes")]
         public List<RecipeModel> Search(string query)
@@ -93,6 +95,7 @@ namespace RecipeLewis.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get recipe by id")]
         public RecipeModel Get(int id)
@@ -109,6 +112,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+        [Authorize(Role.Editor, Role.Admin)]
         [HttpPost("create")]
         [SwaggerOperation(Summary = "Create recipe")]
         public ActionResult<RecipeModel> Create(CreateRecipeRequest request)
@@ -125,6 +129,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+        [Authorize(Role.Editor, Role.Admin)]
         [HttpPut("update")]
         [SwaggerOperation(Summary = "Update recipe")]
         public ActionResult<RecipeModel> Update(UpdateRecipeRequest request)
@@ -146,6 +151,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+        [Authorize(Role.Editor, Role.Admin)]
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete recipe by id")]
         public ActionResult<bool> Delete(int id)
