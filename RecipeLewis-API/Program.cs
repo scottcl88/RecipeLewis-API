@@ -11,45 +11,13 @@ using Azure.Identity;
 
 bool IsOriginAllowed(string host)
 {
-    var corsStrictOriginAllowed = new[] { "capacitor://localhost" };
-    var corsOriginAllowed = new[] { "capacitor", "com.lewis.food", "foodlewis.com", "scottcl.com", "foodlewis.com", "localhost", "surf-n-eat.com", "surfneat.com" };
+    var corsStrictOriginAllowed = new[] { "https://main.d2v2unaw7gu6b3.amplifyapp.com" };
+    var corsOriginAllowed = new[] { "localhost", "recipelewis-api.azurewebsites.net", "main.d2v2unaw7gu6b3.amplifyapp.com", "recipelewis.com" };
     return corsOriginAllowed.Any(origin =>
-        Regex.IsMatch(host, $@"^((http(s)?)|({origin}))?://.*{origin}(:[0-9]+)?$", RegexOptions.IgnoreCase)) || corsStrictOriginAllowed.Any(origin => host == origin);
+        Regex.IsMatch(host, $@"^((http(s)?)|({origin}))?://.*{origin}(:[0-9]+)?$", RegexOptions.IgnoreCase) || corsStrictOriginAllowed.Any(origin => origin == host));
 }
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add Azure App Configuration to the container.
-var azAppConfigConnection = builder.Configuration["AppConfig"];
-if (!string.IsNullOrEmpty(azAppConfigConnection))
-{
-// Use the connection string if it is available.
-builder.Configuration.AddAzureAppConfiguration(options =>
-{
-options.Connect(azAppConfigConnection)
-.ConfigureRefresh(refresh =>
-{
-// All configuration values will be refreshed if the sentinel key changes.
-refresh.Register("TestApp:Settings:Sentinel", refreshAll: true);
-});
-});
-}
-else if (Uri.TryCreate(builder.Configuration["Endpoints:AppConfig"], UriKind.Absolute, out var endpoint))
-{
-// Use Azure Active Directory authentication.
-// The identity of this app should be assigned 'App Configuration Data Reader' or 'App Configuration Data Owner' role in App Configuration.
-// For more information, please visit https://aka.ms/vs/azure-app-configuration/concept-enable-rbac
-builder.Configuration.AddAzureAppConfiguration(options =>
-{
-options.Connect(endpoint, new DefaultAzureCredential())
-.ConfigureRefresh(refresh =>
-{
-// All configuration values will be refreshed if the sentinel key changes.
-refresh.Register("TestApp:Settings:Sentinel", refreshAll: true);
-});
-});
-}
-builder.Services.AddAzureAppConfiguration();
 
 // Add services to the container.
 {
@@ -58,19 +26,20 @@ builder.Services.AddAzureAppConfiguration();
 
     if (!env.IsDevelopment())
     {
-        try
-        {
-            Console.WriteLine("Loading AzureCred in Program...");
-            builder.Configuration.AddAzureKeyVault(
-                 new Uri("https://foodlewisvault.vault.azure.net/"),
-                 new DefaultAzureCredential());
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error in Program: " + ex.Message);
-        }
+        builder.Host.ConfigureHostConfiguration(host => {
+            host.AddAzureKeyVault(
+               new Uri("https://recipelewisvault2.vault.azure.net/"),
+               new DefaultAzureCredential());
+        });
     }
 
+    builder.Host.ConfigureLogging(logging => {
+        logging.ClearProviders();
+        logging.AddConsole();
+        logging.AddDebug();
+        //logging.AddAzureWebAppDiagnostics();
+    });
+    //services.AddAzureAppConfiguration();
 
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -130,7 +99,7 @@ var app = builder.Build();
 //}
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseAzureAppConfiguration();
+//app.UseAzureAppConfiguration();
 
 app.UseHttpsRedirection();
 
