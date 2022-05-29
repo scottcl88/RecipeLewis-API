@@ -37,10 +37,7 @@ var builder = WebApplication.CreateBuilder(args);
         logging.ClearProviders();
         logging.AddConsole();
         logging.AddDebug();
-        //logging.AddAzureWebAppDiagnostics();
     });
-    //services.AddAzureAppConfiguration();
-
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseLazyLoadingProxies()
@@ -92,14 +89,11 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-app.UseSwagger();
-app.UseSwaggerUI();
-//app.UseAzureAppConfiguration();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
