@@ -37,9 +37,32 @@ public class UserService : IUserService
     {
         var user = _dbContext.Users.SingleOrDefault(x => x.Email == request.Email);
 
+        if (user == null)
+        {
+            _logService.Info($"Email is incorrect. Email: {request.Email}", null);
+            throw new AppException("Incorrect email or password");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.PasswordHash))
+        {
+            _logService.Info($"Password Reset is required. Email: {request.Email}", null);
+            //Old user with Auth0 or something else went wrong, force password reset
+            throw new AppException("Password reset required");
+        }
+
+        if (!user.IsVerified)
+        {
+            _logService.Info($"Email verification. Email: {request.Email}", null);
+            //Old user with Auth0 or something else went wrong, force password reset
+            throw new AppException("Email verification required");
+        }
+
         // validate
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new AppException("Email or password is incorrect");
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        {
+            _logService.Info($"Password is incorrect. Email: {request.Email}", null);
+            throw new AppException("Incorrect email or password");
+        }
 
         // authentication successful so generate jwt and refresh tokens
         var jwtToken = _jwtUtils.GenerateJwtToken(user);

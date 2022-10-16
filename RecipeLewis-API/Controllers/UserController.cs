@@ -111,9 +111,23 @@ namespace RecipeLewis.Controllers
         [HttpPost("authenticate")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model, ipAddress());
-            setTokenCookie(response.RefreshToken);
-            return Ok(response);
+            try
+            {
+                var response = _userService.Authenticate(model, ipAddress());
+                setTokenCookie(response.RefreshToken);
+                return Ok(response);
+            }
+            catch (AppException ex1)
+            {
+                _logService.Error(ex1, "Authenticate AppException error: " + ex1.Message, UserId, model);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Replace AppException with UserException or properly handle HTTP response status codes. This prevents non-user error leaks
+                _logService.Error(ex, "Authenticate error: " + ex.Message, UserId, model);
+                throw new Exception("Error", ex);
+            }
         }
 
         [AllowAnonymous]
