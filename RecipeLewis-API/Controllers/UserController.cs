@@ -223,19 +223,11 @@ namespace RecipeLewis.Controllers
         }
 
         [Authorize(Role.User, Role.Editor, Role.Admin)]
-        [HttpPut("update/{id:int}")]
-        public ActionResult<UserModel> Update(UpdateUserRequest model)
+        [HttpPost("update")]
+        public ActionResult<GenericResult> Update(UpdateUserRequest model)
         {
-            // users can update their own account and admins can update any account
-            if (model.UserId != User.UserId.Value && User.Role != Role.Admin)
-                return Unauthorized(new { message = "Unauthorized" });
-
-            // only admins can update role
-            if (User.Role != Role.Admin)
-                model.Role = null;
-
-            var account = _userService.Update(new UserId(model.UserId), model);
-            return Ok(account);
+            var account = _userService.Update(UserId, model);
+            return Ok(new GenericResult { Success = true, Message = "Profile updated successfully" });
         }
 
         [Authorize(Role.Admin)]

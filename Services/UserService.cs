@@ -293,16 +293,17 @@ public class UserService : IUserService
     {
         var user = GetDbUserById(id);
 
-        // validate
-        if (user.Email != request.Email && _dbContext.Users.Any(x => x.Email == request.Email))
-            throw new AppException($"Email '{request.Email}' is already registered");
+        //// validate
+        //if (user.Email != request.Email && _dbContext.Users.Any(x => x.Email == request.Email))
+        //    throw new AppException($"Email '{request.Email}' is already registered");
 
-        // hash password if it was entered
-        if (!string.IsNullOrEmpty(request.Password))
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        //// hash password if it was entered
+        //if (!string.IsNullOrEmpty(request.Password))
+        //    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // copy model to user and save
-        _mapper.Map(request, user);
+        //_mapper.Map(request, user);
+        user.Name = request.Name;
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
