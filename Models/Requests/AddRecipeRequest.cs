@@ -1,4 +1,4 @@
-﻿using Ganss.XSS;
+﻿using Ganss.Xss;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeLewis.Models.Requests;

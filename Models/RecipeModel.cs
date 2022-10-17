@@ -1,5 +1,4 @@
-﻿using Ganss.XSS;
-using System.Text.Json.Serialization;
+﻿using Ganss.Xss;
 
 namespace RecipeLewis.Models;
 
