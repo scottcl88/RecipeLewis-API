@@ -28,7 +28,7 @@ public class EmailService : IEmailService
 
     public async Task Send(string to, string subject, string html)
     {
-        string FROM = "scott.lewis@surf-n-eat.com";
+        string FROM = "support@recipelewis.com";
         string SMTP_USERNAME = _configuration["AWSSmtpUsername"];
         string SMTP_PASSWORD = _configuration["AWSSmtpPassword"];
         string HOST = "email-smtp.us-east-2.amazonaws.com";
@@ -38,7 +38,7 @@ public class EmailService : IEmailService
         // Create and build a new MailMessage object
         MailMessage mailMessage = new MailMessage();
         mailMessage.IsBodyHtml = true;
-        mailMessage.From = new MailAddress(FROM);
+        mailMessage.From = new MailAddress(FROM, "Recipe Lewis Support");
         mailMessage.To.Add(new MailAddress(to));
         mailMessage.Subject = subject;
         mailMessage.Body = html;

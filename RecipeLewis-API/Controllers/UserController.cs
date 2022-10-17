@@ -170,7 +170,7 @@ namespace RecipeLewis.Controllers
         [HttpPost("register")]
         public ActionResult<GenericResult> Register(RegisterRequest request)
         {
-            _userService.Register(request, ipAddress(), Request.Headers["origin"]);
+            _userService.Register(request, ipAddress(), getOrigin());
             return Ok(new GenericResult { Success = true, Message = "Registration successful, please check your email for verification instructions" });
         }
 
@@ -194,7 +194,7 @@ namespace RecipeLewis.Controllers
         [HttpPost("forgot-password")]
         public ActionResult<GenericResult> ForgotPassword(ForgotPasswordRequest model)
         {
-            _userService.ForgotPassword(model, Request.Headers["origin"]);
+            _userService.ForgotPassword(model, getOrigin());
             return Ok(new GenericResult { Success = true, Message = "Please check your email for password reset instructions" });
         }
 
@@ -256,6 +256,19 @@ namespace RecipeLewis.Controllers
 
         // helper methods
 
+        private string getOrigin()
+        {
+            string origin = "";
+            if (HostingEnvironment.IsDevelopment())
+            {
+                origin = "https://localhost:7045";
+            }
+            else
+            {
+                origin = "https://recipelewis.com";
+            }
+            return origin;
+        }
         private void setTokenCookie(string token)
         {
             // append cookie with refresh token to the http response

@@ -387,68 +387,65 @@ public class UserService : IUserService
 
     private void sendVerificationEmail(User user, string origin)
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
+        if (string.IsNullOrEmpty(origin))
         {
-            // origin exists if request sent from browser single page app (e.g. Angular or React)
-            // so send link to verify via single page app
-            var verifyUrl = $"{origin}/verify-email?token={user.VerificationToken}";
-            message = $@"<p>Please click the below link to verify your email address:</p>
+            throw new AppException("Invalid origin when sending password reset email. " + origin);
+        }
+
+        var verifyUrl = $"{origin}/verify-email?token={user.VerificationToken}";
+        string message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
-        }
-        else
-        {
-            // origin missing if request sent directly to api (e.g. from Postman)
-            // so send instructions to verify directly with api
-            message = $@"<p>Please use the below token to verify your email address with the <code>/verify-email</code> api route:</p>
-                            <p><code>{user.VerificationToken}</code></p>";
-        }
 
         _emailService.Send(
             to: user.Email,
-            subject: "Sign-up Verification API - Verify Email",
-            html: $@"<h4>Verify Email</h4>
+            subject: "Recipe Lewis - Verify Email",
+            html: $@"<h4>Recipe Lewis - Verify Email</h4>
+                        <p>Hello {user.Name},</p>
                         <p>Thanks for registering!</p>
-                        {message}"
+                        {message}
+                        <p>Thank you,<br>
+                        <p>Recipe Lewis</p>"
         );
     }
 
     private void sendAlreadyRegisteredEmail(string email, string origin)
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
-            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/forgot-password"">forgot password</a> page.</p>";
-        else
-            message = "<p>If you don't know your password you can reset it via the <code>/forgot-password</code> api route.</p>";
+        if (string.IsNullOrEmpty(origin))
+        {
+            throw new AppException("Invalid origin when sending password reset email. " + origin);
+        }
+        string message = $@"<p>If you don't know your password please visit the <a href=""{origin}/forgot-password"">forgot password</a> page.</p>";
 
         _emailService.Send(
             to: email,
-            subject: "Sign-up Verification API - Email Already Registered",
-            html: $@"<h4>Email Already Registered</h4>
-                        <p>Your email <strong>{email}</strong> is already registered.</p>
-                        {message}"
+            subject: "Recipe Lewis - Email Already Registered",
+            html: $@"<h4>Recipe Lewis - Email Already Registered</h4>
+                        <p>Hello,</p>
+                        <p>Your email <strong>{email}</strong> is already registered with Recipe Lewis.</p>
+                        {message}
+                        <p>Thank you,<br>
+                        <p>Recipe Lewis</p>"
         );
     }
 
     private void sendPasswordResetEmail(User user, string origin)
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
+        if (string.IsNullOrEmpty(origin))
         {
-            var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
-            message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
-                            <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
+            throw new AppException("Invalid origin when sending password reset email. " + origin);
         }
-        else
-        {
-            message = $@"<p>Please use the below token to reset your password with the <code>/users/reset-password</code> api route:</p>
-                            <p><code>{user.ResetToken}</code></p>";
-        }
+        var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
+        string message = $@"<p>Hello {user.Name},</p>
+                        <p>Please click the below link to reset your password, the link will be valid for 1 day.</p>
+                        <p><a href=""{resetUrl}"">{resetUrl}</a></p>
+                        <p>If you didn't request this email or have any questions please contact us at <a href=""mailto:support@recipelewis.com"">support@recipelewis.com</a></p>
+                        <p>Thank you,<br>
+                        <p>Recipe Lewis</p>";
 
         _emailService.Send(
             to: user.Email,
-            subject: "Sign-up Verification API - Reset Password",
-            html: $@"<h4>Reset Password Email</h4>
+            subject: "Recipe Lewis - Reset Password",
+            html: $@"<h4>Recipe Lewis - Reset Password</h4>
                         {message}"
         );
     }
@@ -458,7 +455,7 @@ public class UserService : IUserService
         string message;
         message = $@"<p>The user {user.Email} has requested edit access. UserId = {user.UserId}</p>";
         _emailService.Send(
-            to: user.Email,
+            to: "support@recipelewis.com",
             subject: "Access Requested",
             html: $@"<h4>Access Requested</h4>
                         {message}"
