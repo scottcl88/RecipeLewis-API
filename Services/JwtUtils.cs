@@ -46,7 +46,7 @@ public class JwtUtils : IJwtUtils
 
     public int? ValidateJwtToken(string token)
     {
-        if (token == null)
+        if (string.IsNullOrWhiteSpace(token))
             return null;
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -69,7 +69,7 @@ public class JwtUtils : IJwtUtils
             // return user id from JWT token if validation successful
             return userId;
         }
-        catch
+        catch(Exception ex)
         {
             // return null if validation fails
             return null;

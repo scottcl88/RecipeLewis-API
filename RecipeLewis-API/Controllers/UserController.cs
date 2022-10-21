@@ -114,7 +114,6 @@ namespace RecipeLewis.Controllers
             try
             {
                 var response = _userService.Authenticate(model, ipAddress());
-                setTokenCookie(response.RefreshToken);
                 return Ok(response);
             }
             catch (AppException ex1)
@@ -132,20 +131,18 @@ namespace RecipeLewis.Controllers
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public IActionResult RefreshToken()
+        public IActionResult RefreshToken(RefreshTokenRequest request)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
-            var response = _userService.RefreshToken(refreshToken, ipAddress());
-            setTokenCookie(response.RefreshToken);
+            var response = _userService.RefreshToken(request.Token, ipAddress());
             return Ok(response);
         }
 
         [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpPost("revoke-token")]
-        public IActionResult RevokeToken(RevokeTokenRequest model)
+        public ActionResult<GenericResult> RevokeToken(RevokeTokenRequest model)
         {
             // accept token from request body or cookie
-            var token = model.Token ?? Request.Cookies["refreshToken"];
+            var token = model.Token;
 
             if (string.IsNullOrEmpty(token))
                 return BadRequest(new { message = "Token is required" });
@@ -155,7 +152,7 @@ namespace RecipeLewis.Controllers
                 return Unauthorized(new { message = "Unauthorized" });
 
             _userService.RevokeToken(token, ipAddress());
-            return Ok(new { message = "Token revoked" });
+            return Ok(new GenericResult { Success = true, Message = "Token revoked" });
         }
 
         [Authorize(Role.User, Role.Editor, Role.Admin)]
@@ -260,16 +257,6 @@ namespace RecipeLewis.Controllers
                 origin = "https://recipelewis.com";
             }
             return origin;
-        }
-        private void setTokenCookie(string token)
-        {
-            // append cookie with refresh token to the http response
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
         private string ipAddress()
