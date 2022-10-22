@@ -246,7 +246,7 @@ namespace RecipeLewis.Controllers
             }
             else
             {
-                origin = "https://recipelewis.com";
+                origin = "https://www.recipelewis.com";
             }
             return origin;
         }
