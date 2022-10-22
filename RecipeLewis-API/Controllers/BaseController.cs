@@ -1,8 +1,6 @@
-﻿using RecipeLewis.Models;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using System.Security.Claims;
+using RecipeLewis.Models;
 
 namespace RecipeLewis.Controllers
 {
@@ -17,6 +15,7 @@ namespace RecipeLewis.Controllers
         {
             HostingEnvironment = hostingEnvironment;
         }
+
         public new UserModel? User => (UserModel?)HttpContext.Items["User"];
 
         public UserId? UserId => User?.UserId;

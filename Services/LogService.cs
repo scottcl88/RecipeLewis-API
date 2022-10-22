@@ -1,7 +1,7 @@
 ﻿using Database;
-using RecipeLewis.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using RecipeLewis.Models;
 
 namespace RecipeLewis.Services
 {
@@ -118,7 +118,7 @@ namespace RecipeLewis.Services
 
         public bool Error(string message, UserId? userId, object? requestData = null)
         {
-            if(userId == null)
+            if (userId == null)
             {
                 userId = new UserId(0);
             }

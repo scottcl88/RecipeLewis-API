@@ -1,5 +1,4 @@
 ﻿using Ganss.Xss;
-using System.ComponentModel.DataAnnotations;
 
 namespace RecipeLewis.Models.Requests;
 
@@ -21,6 +20,7 @@ public class CreateRecipeRequest
     public string? Nutrition { get; set; }
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
+
     public void SanitizeHtml()
     {
         var sanitizer = new HtmlSanitizer();
@@ -30,6 +30,7 @@ public class CreateRecipeRequest
         this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML);
     }
 }
+
 public class UpdateRecipeRequest
 {
     public RecipeId Id { get; set; }

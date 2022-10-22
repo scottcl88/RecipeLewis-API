@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database
 {
@@ -8,6 +6,7 @@ namespace Database
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RecipeId { get; set; }
+
         public string? Title { get; set; }
         public virtual string? Author { get; set; }
         public string? Description { get; set; }
@@ -25,6 +24,5 @@ namespace Database
         public virtual Category Category { get; set; }
         public virtual List<Tag> Tags { get; set; } = new List<Tag>();
         public virtual List<Document> Documents { get; set; } = new List<Document>();
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace RecipeLewis.Models;
+
 public enum Role
 {
     Unknown,
@@ -8,6 +9,7 @@ public enum Role
     Editor,
     Admin
 }
+
 public record class UserId(int Value);
 
 public class UserModel : EntityDataModel
@@ -24,8 +26,10 @@ public class UserModel : EntityDataModel
     public Role Role { get; set; }
     public bool RequestedAccess { get; set; }
     public DateTime? RequestedAccessExpires { get; set; }
+
     [JsonIgnore]
     public List<RefreshTokenModel>? RefreshTokens { get; set; }
+
     public bool OwnsToken(string token)
     {
         return this.RefreshTokens?.Find(x => x.Token == token) != null;

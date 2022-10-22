@@ -1,7 +1,4 @@
-﻿using Database;
-using RecipeLewis.Models.Results;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
+﻿using RecipeLewis.Models;
 
 namespace RecipeLewis.Services
 {

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Database;
+
 public class RefreshToken : EntityData
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [JsonIgnore]
     public int Id { get; set; }
+
     public string Token { get; set; }
     public DateTime Expires { get; set; }
     public DateTime Created { get; set; }
@@ -22,4 +21,3 @@ public class RefreshToken : EntityData
     public bool IsRevoked => Revoked != null;
     public bool IsActive => !IsRevoked && !IsExpired;
 }
-

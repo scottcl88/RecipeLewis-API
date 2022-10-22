@@ -20,6 +20,7 @@ public class RecipeService : IRecipeService
         _mapper = mapper;
         _userService = userService;
     }
+
     public RecipeModel Create(CreateRecipeRequest request, UserModel currentUser)
     {
         // map model to new recipe object
@@ -72,7 +73,7 @@ public class RecipeService : IRecipeService
     {
         var recipe = GetRecipeById(recipeId);
         List<Tag> tags = recipe.Tags;
-        for(int i = tags.Count - 1; i >= 0; i--)
+        for (int i = tags.Count - 1; i >= 0; i--)
         {
             var currentTag = tags[i];
             var newTag = tagModels.FirstOrDefault(x => x.TagId == currentTag.TagId && x.Name == currentTag.Name);
@@ -104,10 +105,12 @@ public class RecipeService : IRecipeService
         }
         return tags;
     }
+
     private Tag? GetTag(int tagId)
     {
         return _dbContext.Tags.FirstOrDefault(x => x.TagId == tagId && x.RecipeId == null);
     }
+
     private Tag? FindTag(string name)
     {
         return _dbContext.Tags.FirstOrDefault(x => x.Name == name && x.RecipeId == null);
@@ -121,6 +124,7 @@ public class RecipeService : IRecipeService
         recipe.DeletedDateTime = DateTime.UtcNow;
         _dbContext.SaveChanges();
     }
+
     public List<RecipeModel> Search(string query)
     {
         var recipes = _dbContext.Recipes.Where(x => x.Title.ToLower().Contains(query) && x.DeletedDateTime == null);
@@ -128,11 +132,12 @@ public class RecipeService : IRecipeService
         recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));
         return recipeModels;
     }
+
     public List<RecipeModel> GetAll()
     {
         var recipes = _dbContext.Recipes.Where(x => x.DeletedDateTime == null);
         var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
-        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));      
+        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));
         return recipeModels;
     }
 
@@ -143,6 +148,7 @@ public class RecipeService : IRecipeService
         recipeModel.Documents.RemoveAll(x => x.DeletedDateTime != null);
         return recipeModel;
     }
+
     public Recipe? GetRecipeById(RecipeId recipeId)
     {
         var recipe = _dbContext.Recipes.FirstOrDefault(x => x.RecipeId == recipeId.Value && x.DeletedDateTime == null);

@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using RecipeLewis.Models;
+﻿using RecipeLewis.Models;
 using RecipeLewis.Services;
 
 namespace RecipeLewis.Middleware;
+
 public class JwtMiddleware
 {
     private readonly RequestDelegate _next;

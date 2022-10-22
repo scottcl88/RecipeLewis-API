@@ -2,6 +2,8 @@
 {
     public class RecaptchaException : Exception
     {
-        public RecaptchaException(): base(){}
+        public RecaptchaException() : base()
+        {
+        }
     }
 }

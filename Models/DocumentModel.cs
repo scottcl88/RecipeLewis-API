@@ -1,7 +1,4 @@
-﻿using RecipeLewis.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace RecipeLewis.Models;
+﻿namespace RecipeLewis.Models;
 
 public class DocumentModel : EntityDataUserModel
 {
@@ -14,4 +11,3 @@ public class DocumentModel : EntityDataUserModel
     public byte[] Bytes { get; set; }
     public Guid DocumentKey { get; set; }
 }
-

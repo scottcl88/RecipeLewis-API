@@ -4,7 +4,6 @@ namespace RecipeLewis.Models.Requests;
 
 public class CreateUserRequest
 {
-
     [Required]
     public string FirstName { get; set; }
 
@@ -27,6 +26,7 @@ public class CreateUserRequest
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 }
+
 public class ForgotPasswordRequest
 {
     [Required]
@@ -51,6 +51,7 @@ public class RegisterRequest
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 }
+
 public class ResetPasswordRequest
 {
     [Required]
@@ -69,6 +70,7 @@ public class UpdateUserRequest
 {
     public string Name { get; set; }
 }
+
 public class VerifyEmailRequest
 {
     [Required]

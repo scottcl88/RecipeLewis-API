@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
 
 namespace Database
 {
@@ -10,6 +9,7 @@ namespace Database
       : base(options)
         {
         }
+
         public DbSet<Log> Logs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Recipe> Recipes { get; set; }

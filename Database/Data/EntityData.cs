@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Database;
 
@@ -9,6 +8,7 @@ public class EntityData
     {
         CreatedDateTime = DateTime.UtcNow;
     }
+
     [Required]
     [Display(Name = "Created Date")]
     public DateTime CreatedDateTime { get; set; }
@@ -24,8 +24,10 @@ public class EntityDataUser : EntityData
 {
     [Display(Name = "Created By")]
     public virtual User? CreatedBy { get; set; }
+
     [Display(Name = "Modified By")]
     public virtual User? ModifiedBy { get; set; }
+
     [Display(Name = "Deleted By")]
     public virtual User? DeletedBy { get; set; }
 }

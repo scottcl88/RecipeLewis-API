@@ -6,6 +6,7 @@ namespace Database
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
+
         public string Name { get; set; }
     }
 }

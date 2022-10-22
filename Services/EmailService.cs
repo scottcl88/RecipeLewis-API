@@ -1,15 +1,11 @@
-﻿using Database;
-using RecipeLewis.Models;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using MimeKit;
-using MimeKit.Text;
-using System.Net.Mail;
+using RecipeLewis.Models;
 using System.Net;
-using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
 
 namespace RecipeLewis.Services;
+
 public interface IEmailService
 {
     Task Send(string to, string subject, string html);

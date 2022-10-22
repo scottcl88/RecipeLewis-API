@@ -3,6 +3,7 @@
 namespace RecipeLewis.Models;
 
 public record class RecipeId(int Value);
+
 public class RecipeModel : EntityDataUserModel
 {
     public int RecipeId { get; set; }
@@ -23,6 +24,7 @@ public class RecipeModel : EntityDataUserModel
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
     public List<DocumentModel> Documents { get; set; } = new List<DocumentModel>();
+
     public void SanitizeHtml()
     {
         var sanitizer = new HtmlSanitizer();

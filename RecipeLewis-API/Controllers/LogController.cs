@@ -1,11 +1,8 @@
 ﻿using Database;
-using RecipeLewis.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
+using RecipeLewis.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Threading.Tasks;
 
 namespace RecipeLewis.Controllers
 {

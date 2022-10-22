@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace RecipeLewis.Models.Requests;
+
 public class AuthenticateRequest
 {
     [Required]

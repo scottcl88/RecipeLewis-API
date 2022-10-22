@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -7,7 +8,6 @@ using RecipeLewis.Models;
 using RecipeLewis.Services;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Azure.Identity;
 
 bool IsOriginAllowed(string host)
 {

@@ -1,17 +1,8 @@
 ﻿using AutoMapper;
 using Database;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
-using RecipeLewis.Models.Results;
-using System.Security.Cryptography;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.Extensions.Options;
+using RecipeLewis.Models;
+using System.Data;
 
 namespace RecipeLewis.Services;
 
@@ -33,6 +24,7 @@ public class DocumentService : IDocumentService
         _userService = userService;
         _appSettings = appSettings.Value;
     }
+
     public List<DocumentModel> GetAll(RecipeId recipeId)
     {
         var recipe = _recipeService.GetRecipeById(recipeId);
@@ -40,17 +32,19 @@ public class DocumentService : IDocumentService
         var documentModels = _mapper.Map<List<DocumentModel>>(documents);
         return documentModels;
     }
+
     public DocumentModel Get(RecipeId recipeId, int documentId)
     {
         var recipe = _recipeService.GetRecipeById(recipeId);
         var document = recipe.Documents.FirstOrDefault(x => x.DocumentId == documentId);
-        if(document == null)
+        if (document == null)
         {
             throw new AppException($"Document not found for RecipeId {recipeId.Value} and DocumentId {documentId}");
         }
         var documentModel = _mapper.Map<DocumentModel>(document);
         return documentModel;
     }
+
     public bool AddDocuments(List<DocumentModel> documentsToAdd, RecipeId recipeId, UserModel currentUser)
     {
         var recipe = _recipeService.GetRecipeById(recipeId);
@@ -63,6 +57,7 @@ public class DocumentService : IDocumentService
         _dbContext.SaveChanges();
         return true;
     }
+
     public bool DeleteDocuments(List<DocumentModel> documentsToDelete, RecipeId recipeId, UserModel currentUser)
     {
         if (!documentsToDelete.Any()) return true;
@@ -72,7 +67,7 @@ public class DocumentService : IDocumentService
         foreach (var document in existingDocuments)
         {
             var foundDocument = documentsToDelete.FirstOrDefault(x => x.DocumentId == document.DocumentId);
-            if(foundDocument != null)
+            if (foundDocument != null)
             {
                 document.DeletedDateTime = DateTime.UtcNow;
                 document.DeletedBy = user;

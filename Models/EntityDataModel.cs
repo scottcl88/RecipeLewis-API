@@ -14,12 +14,15 @@ public class EntityDataModel
     [Display(Name = "Deleted Date")]
     public DateTime? DeletedDateTime { get; set; }
 }
+
 public class EntityDataUserModel : EntityDataModel
 {
     [Display(Name = "Created By")]
     public UserModel? CreatedBy { get; set; }
+
     [Display(Name = "Modified By")]
     public UserModel? ModifiedBy { get; set; }
+
     [Display(Name = "Deleted By")]
     public UserModel? DeletedBy { get; set; }
 }

@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using RecipeLewis.Business;
-using RecipeLewis.Models;
-using RecipeLewis.Services;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Models.Results;
+using RecipeLewis.Models;
+using RecipeLewis.Services;
 
 namespace RecipeLewis.Controllers
 {
@@ -129,7 +127,6 @@ namespace RecipeLewis.Controllers
                 return StatusCode(500, uploadResults);
             }
         }
-
 
         private string GetMimeTypeForFileExtension(string filePath)
         {

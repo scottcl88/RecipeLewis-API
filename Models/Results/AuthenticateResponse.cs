@@ -1,6 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace RecipeLewis.Models.Results;
 
-namespace RecipeLewis.Models.Results;
 public class AuthenticateResponse
 {
     public UserId UserId { get; set; }

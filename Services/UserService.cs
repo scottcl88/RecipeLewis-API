@@ -1,17 +1,11 @@
 ﻿using AutoMapper;
 using Database;
+using Microsoft.Extensions.Options;
 using RecipeLewis.Models;
 using RecipeLewis.Models.Requests;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
 using RecipeLewis.Models.Results;
+using System.Data;
 using System.Security.Cryptography;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.Extensions.Options;
 
 namespace RecipeLewis.Services;
 
@@ -33,6 +27,7 @@ public class UserService : IUserService
         _emailService = emailService;
         _appSettings = appSettings.Value;
     }
+
     public AuthenticateResponse Authenticate(AuthenticateRequest request, string ipAddress)
     {
         var user = _dbContext.Users.SingleOrDefault(x => x.Email == request.Email);
@@ -115,6 +110,7 @@ public class UserService : IUserService
         var userModel = _mapper.Map<UserModel>(user);
         return new AuthenticateResponse(userModel, jwtToken, newRefreshToken.Token);
     }
+
     public void RevokeToken(string token, string ipAddress)
     {
         var user = getUserByRefreshToken(token);
@@ -328,10 +324,11 @@ public class UserService : IUserService
         _logService.Info($"User {id.Value} promoted to {newRole} by User {currentUser?.Value}", currentUser);
         return _mapper.Map<UserModel>(user);
     }
+
     public UserModel Demote(UserId id, UserId? currentUser)
     {
         var user = GetDbUserById(id);
-        if(user == null)
+        if (user == null)
         {
             throw new AppException("Cannot find user to demote");
         }
@@ -345,6 +342,7 @@ public class UserService : IUserService
         _logService.Info($"User {id.Value} demoted to {newRole} by User {currentUser?.Value}", currentUser);
         return _mapper.Map<UserModel>(user);
     }
+
     public void Delete(UserId id)
     {
         var user = GetDbUserById(id);
@@ -469,6 +467,7 @@ public class UserService : IUserService
         var userModels = _mapper.Map<List<UserModel>>(users.ToList());
         return userModels;
     }
+
     public List<UserModel> GetAll()
     {
         var users = _dbContext.Users.Where(x => x.DeletedDateTime == null);
@@ -482,6 +481,7 @@ public class UserService : IUserService
         var userModel = _mapper.Map<UserModel>(user);
         return userModel;
     }
+
     public User? GetDbUserById(UserId userId)
     {
         var user = _dbContext.Users.FirstOrDefault(x => x.UserId == userId.Value && x.DeletedDateTime == null);
@@ -502,5 +502,4 @@ public class UserService : IUserService
         var userModel = _mapper.Map<UserModel>(user);
         return userModel;
     }
-
 }

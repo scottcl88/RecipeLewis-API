@@ -6,6 +6,7 @@ namespace Database
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DocumentId { get; set; }
+
         public string? Name { get; set; }
         public string? FileName { get; set; }
         public string? Description { get; set; }

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Options;
-using RecipeLewis.Models;
+﻿using RecipeLewis.Models;
 using System.Net;
 using System.Text.Json;
 
 namespace RecipeLewis.Middleware;
+
 public class ErrorHandlerMiddleware
 {
     private readonly RequestDelegate _next;
@@ -30,10 +30,12 @@ public class ErrorHandlerMiddleware
                     // custom application error
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
+
                 case KeyNotFoundException e:
                     // not found error
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
+
                 default:
                     // unhandled error
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;

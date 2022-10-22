@@ -1,17 +1,8 @@
 ﻿using AutoMapper;
 using Database;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
-using RecipeLewis.Models.Results;
-using System.Security.Cryptography;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.Extensions.Options;
+using RecipeLewis.Models;
+using System.Data;
 
 namespace RecipeLewis.Services;
 
@@ -33,6 +24,7 @@ public class CategoryService : ICategoryService
         _emailService = emailService;
         _appSettings = appSettings.Value;
     }
+
     public List<CategoryModel> GetAll()
     {
         var categories = _dbContext.Categories.Where(x => x.DeletedDateTime == null);

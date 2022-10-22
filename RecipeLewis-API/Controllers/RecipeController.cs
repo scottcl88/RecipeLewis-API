@@ -1,21 +1,10 @@
 ﻿using AutoMapper;
-using RecipeLewis.Models;
-using RecipeLewis.Services;
-using RecipeLewis.Models.Requests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using RestSharp;
+using RecipeLewis.Models;
+using RecipeLewis.Models.Requests;
+using RecipeLewis.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
-using System.Threading.Tasks;
-using RecipeLewis.Models.Results;
 
 namespace RecipeLewis.Controllers
 {
@@ -76,6 +65,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+
         [AllowAnonymous]
         [HttpGet("get-all")]
         [SwaggerOperation(Summary = "Get all recipes")]
@@ -111,6 +101,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+
         [Authorize(Role.Editor, Role.Admin)]
         [HttpPost("create")]
         [SwaggerOperation(Summary = "Create recipe")]
@@ -128,6 +119,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+
         [Authorize(Role.Editor, Role.Admin)]
         [HttpPut("update")]
         [SwaggerOperation(Summary = "Update recipe")]
@@ -150,6 +142,7 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
+
         [Authorize(Role.Editor, Role.Admin)]
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete recipe by id")]
@@ -166,6 +159,5 @@ namespace RecipeLewis.Controllers
                 throw;
             }
         }
-
     }
 }

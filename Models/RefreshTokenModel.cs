@@ -7,19 +7,23 @@ public class RefreshTokenRequest
 {
     public string Token { get; set; }
 }
+
 public class RevokeTokenRequest
 {
     public string Token { get; set; }
 }
+
 public class ValidateResetTokenRequest
 {
     [Required]
     public string Token { get; set; }
 }
+
 public class RefreshTokenModel : EntityDataModel
 {
     [JsonIgnore]
     public int Id { get; set; }
+
     public string Token { get; set; }
     public DateTime Expires { get; set; }
     public DateTime Created { get; set; }

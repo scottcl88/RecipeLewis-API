@@ -1,22 +1,14 @@
 ﻿using AutoMapper;
-using RecipeLewis.Models;
-using RecipeLewis.Services;
-using RecipeLewis.Models.Requests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using RestSharp;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
-using System.Threading.Tasks;
-using RecipeLewis.Models.Results;
 using Models.Results;
+using Newtonsoft.Json;
+using RecipeLewis.Models;
+using RecipeLewis.Models.Requests;
+using RecipeLewis.Models.Results;
+using RecipeLewis.Services;
+using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeLewis.Controllers
 {
@@ -234,6 +226,7 @@ namespace RecipeLewis.Controllers
             var account = _userService.Promote(new UserId(userId), UserId);
             return Ok(account);
         }
+
         [Authorize(Role.Admin)]
         [HttpPost("demote/{userId:int}")]
         public ActionResult<UserModel> Demote(int userId)
@@ -241,7 +234,6 @@ namespace RecipeLewis.Controllers
             var account = _userService.Demote(new UserId(userId), UserId);
             return Ok(account);
         }
-
 
         // helper methods
 

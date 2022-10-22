@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Database;
+
 public enum Role
 {
     Unknown,
@@ -12,10 +10,12 @@ public enum Role
     Editor,
     Admin
 }
+
 public class User : EntityData
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int UserId { get; set; }
+
     public Guid? UserGUID { get; set; }
     public string LastIPAddress { get; set; }
     public DateTime LastLogin { get; set; }
@@ -27,8 +27,10 @@ public class User : EntityData
     public Role Role { get; set; }
     public string? VerificationToken { get; set; }
     public DateTime? Verified { get; set; }
+
     [JsonIgnore]
     public string PasswordHash { get; set; }
+
     public bool IsVerified => Verified.HasValue || PasswordReset.HasValue;
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
@@ -39,4 +41,3 @@ public class User : EntityData
     [JsonIgnore]
     public virtual List<RefreshToken> RefreshTokens { get; set; }
 }
-

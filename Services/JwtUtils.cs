@@ -12,7 +12,9 @@ namespace RecipeLewis.Services;
 public interface IJwtUtils
 {
     public string GenerateJwtToken(User user);
+
     public int? ValidateJwtToken(string token);
+
     public RefreshToken GenerateRefreshToken(string ipAddress);
 }
 
@@ -69,7 +71,7 @@ public class JwtUtils : IJwtUtils
             // return user id from JWT token if validation successful
             return userId;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             // return null if validation fails
             return null;
