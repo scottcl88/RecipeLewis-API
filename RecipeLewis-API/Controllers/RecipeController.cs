@@ -69,7 +69,7 @@ namespace RecipeLewis.Controllers
         [AllowAnonymous]
         [HttpGet("get-all")]
         [SwaggerOperation(Summary = "Get all recipes")]
-        public List<RecipeModel> GetAll(int id)
+        public List<RecipeModel> GetAll()
         {
             try
             {
@@ -79,7 +79,7 @@ namespace RecipeLewis.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error on Get", UserId, new { id, UserId });
+                _logService.Error(ex, "Error on GetAll", UserId, new { UserId });
                 throw;
             }
         }
@@ -98,6 +98,23 @@ namespace RecipeLewis.Controllers
             catch (Exception ex)
             {
                 _logService.Error(ex, "Error on Get", UserId, new { id, UserId });
+                throw;
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("documents/{id}")]
+        [SwaggerOperation(Summary = "Get recipe documents by id")]
+        public List<DocumentModel> GetDocuments(int id)
+        {
+            try
+            {
+                var foundRecipeDocuments = _recipeService.GetDocuments(new RecipeId(id));
+                return foundRecipeDocuments;
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "Error on GetDocuments", UserId, new { id, UserId });
                 throw;
             }
         }

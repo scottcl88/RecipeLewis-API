@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Database;
+using Microsoft.EntityFrameworkCore;
 using RecipeLewis.Models;
 using RecipeLewis.Models.Requests;
 using System.Data;
@@ -129,15 +130,13 @@ public class RecipeService : IRecipeService
     {
         var recipes = _dbContext.Recipes.Where(x => x.Title.ToLower().Contains(query) && x.DeletedDateTime == null);
         var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
-        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));
         return recipeModels;
     }
 
     public List<RecipeModel> GetAll()
     {
-        var recipes = _dbContext.Recipes.Where(x => x.DeletedDateTime == null);
-        var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
-        recipeModels.ForEach(x => x.Documents.RemoveAll(x => x.DeletedDateTime != null));
+        var recipes = _dbContext.Recipes.Where(x => x.DeletedDateTime == null).ToList();
+        var recipeModels = _mapper.Map<List<RecipeModel>>(recipes);
         return recipeModels;
     }
 
@@ -145,8 +144,14 @@ public class RecipeService : IRecipeService
     {
         var recipe = GetRecipeById(recipeId);
         var recipeModel = _mapper.Map<RecipeModel>(recipe);
-        recipeModel.Documents.RemoveAll(x => x.DeletedDateTime != null);
         return recipeModel;
+    }
+    public List<DocumentModel> GetDocuments(RecipeId recipeId)
+    {
+        var recipe = GetRecipeById(recipeId);
+        recipe?.Documents.RemoveAll(x => x.DeletedDateTime != null);
+        var documentModels = _mapper.Map<List<DocumentModel>>(recipe?.Documents);
+        return documentModels;
     }
 
     public Recipe? GetRecipeById(RecipeId recipeId)

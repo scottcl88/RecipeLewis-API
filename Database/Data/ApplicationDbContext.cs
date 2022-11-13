@@ -8,6 +8,7 @@ namespace Database
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
       : base(options)
         {
+            
         }
 
         public DbSet<Log> Logs { get; set; }
@@ -60,6 +61,7 @@ namespace Database
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 4, Name = "Dinner", CreatedDateTime = date });
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 5, Name = "Snack", CreatedDateTime = date });
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Desert", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 7, Name = "Drink", CreatedDateTime = date });
         }
     }
 }

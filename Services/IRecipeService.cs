@@ -9,6 +9,7 @@ namespace RecipeLewis.Services
         public List<RecipeModel> Search(string query);
 
         public RecipeModel? Get(RecipeId userId);
+        public List<DocumentModel> GetDocuments(RecipeId userId);
 
         public List<RecipeModel> GetAll();
 

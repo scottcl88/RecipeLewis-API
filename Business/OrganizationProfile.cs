@@ -15,7 +15,8 @@ namespace RecipeLewis.Business
             CreateMap<UserModel, User>();
             CreateMap<RegisterRequest, User>();
             CreateMap<RefreshToken, RefreshTokenModel>();
-            CreateMap<Recipe, RecipeModel>();
+            CreateMap<Recipe, RecipeModel>()
+                .ForMember(x => x.Documents, x => x.Ignore());
             CreateMap<CreateRecipeRequest, RecipeModel>();
             CreateMap<UpdateRecipeRequest, RecipeModel>();
             CreateMap<CreateRecipeRequest, Recipe>();
