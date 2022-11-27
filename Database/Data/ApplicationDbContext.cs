@@ -60,7 +60,7 @@ namespace Database
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 3, Name = "Lunch", CreatedDateTime = date });
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 4, Name = "Dinner", CreatedDateTime = date });
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 5, Name = "Snack", CreatedDateTime = date });
-            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Desert", CreatedDateTime = date });
+            modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 6, Name = "Dessert", CreatedDateTime = date });
             modelBuilder.Entity<Category>().HasData(new Category { CategoryId = 7, Name = "Drink", CreatedDateTime = date });
         }
     }
