@@ -85,7 +85,7 @@ namespace RecipeLewis.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         [SwaggerOperation(Summary = "Get recipe by id")]
         public RecipeModel Get(int id)
         {
@@ -161,7 +161,7 @@ namespace RecipeLewis.Controllers
         }
 
         [Authorize(Role.Editor, Role.Admin)]
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [SwaggerOperation(Summary = "Delete recipe by id")]
         public ActionResult<bool> Delete(int id)
         {
