@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Database;
-using Microsoft.EntityFrameworkCore;
 using RecipeLewis.Models;
 using RecipeLewis.Models.Requests;
 using System.Data;
@@ -146,6 +145,7 @@ public class RecipeService : IRecipeService
         var recipeModel = _mapper.Map<RecipeModel>(recipe);
         return recipeModel;
     }
+
     public List<DocumentModel> GetDocuments(RecipeId recipeId)
     {
         var recipe = GetRecipeById(recipeId);
