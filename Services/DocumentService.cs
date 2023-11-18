@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Database;
-using Microsoft.Extensions.Options;
 using RecipeLewis.Models;
 using System.Data;
 
@@ -13,7 +12,7 @@ public class DocumentService : IDocumentService
     private readonly IUserService _userService;
     private readonly IRecipeService _recipeService;
 
-    public DocumentService(ApplicationDbContext dbContext, LogService logService, IOptions<AppSettings> appSettings, IRecipeService recipeService, IUserService userService, IMapper mapper)
+    public DocumentService(ApplicationDbContext dbContext, IRecipeService recipeService, IUserService userService, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
@@ -44,11 +43,15 @@ public class DocumentService : IDocumentService
     public bool AddDocuments(List<DocumentModel> documentsToAdd, RecipeId recipeId, UserModel currentUser)
     {
         var recipe = _recipeService.GetRecipeById(recipeId);
+        if (recipe == null)
+        {
+            throw new AppException($"Recipe not found for RecipeId {recipeId.Value}");
+        }
         var user = _userService.GetDbUserById(currentUser.UserId);
         var newDocuments = _mapper.Map<List<Document>>(documentsToAdd);
         newDocuments.ForEach(x => x.DocumentId = 0);
         newDocuments.ForEach(x => x.CreatedBy = user);
-        recipe?.Documents.AddRange(newDocuments);
+        recipe.Documents.AddRange(newDocuments);
         _dbContext.SaveChanges();
         return true;
     }
