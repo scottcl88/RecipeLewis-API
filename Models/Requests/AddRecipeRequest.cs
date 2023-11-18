@@ -25,9 +25,9 @@ public class CreateRecipeRequest
     {
         var sanitizer = new HtmlSanitizer();
         var unsafeHTML = this.IngredientsHTML;
-        this.IngredientsHTML = sanitizer.Sanitize(unsafeHTML);
+        this.IngredientsHTML = sanitizer.Sanitize(unsafeHTML ?? "");
         unsafeHTML = this.DirectionsHTML;
-        this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML);
+        this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML ?? "");
     }
 }
 
@@ -56,8 +56,8 @@ public class UpdateRecipeRequest
     {
         var sanitizer = new HtmlSanitizer();
         var unsafeHTML = this.IngredientsHTML;
-        this.IngredientsHTML = sanitizer.Sanitize(unsafeHTML);
+        this.IngredientsHTML = sanitizer.Sanitize(unsafeHTML ?? "");
         unsafeHTML = this.DirectionsHTML;
-        this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML);
+        this.DirectionsHTML = sanitizer.Sanitize(unsafeHTML ?? "");
     }
 }

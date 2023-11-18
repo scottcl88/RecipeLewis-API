@@ -18,13 +18,9 @@ namespace RecipeLewis.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IDocumentService _documentService;
         private readonly LogService _logService;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
 
-        public RecipeController(IMapper mapper, IConfiguration configuration, IDocumentService documentService, IRecipeService recipeService, ICategoryService categoryService, LogService logService, IHostEnvironment environment) : base(environment)
+        public RecipeController(IDocumentService documentService, IRecipeService recipeService, ICategoryService categoryService, LogService logService, IHostEnvironment environment) : base(environment)
         {
-            _mapper = mapper;
-            _configuration = configuration;
             _recipeService = recipeService;
             _documentService = documentService;
             _logService = logService;
@@ -87,7 +83,7 @@ namespace RecipeLewis.Controllers
         [AllowAnonymous]
         [HttpGet("get/{id}")]
         [SwaggerOperation(Summary = "Get recipe by id")]
-        public RecipeModel Get(int id)
+        public RecipeModel? Get(int id)
         {
             try
             {

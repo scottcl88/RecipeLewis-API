@@ -26,18 +26,12 @@ var builder = WebApplication.CreateBuilder(args);
 
     if (!env.IsDevelopment())
     {
-        builder.Host.ConfigureHostConfiguration(host => {
-            host.AddAzureKeyVault(
+        builder.Configuration.AddAzureKeyVault(
                new Uri("https://recipelewisvault2.vault.azure.net/"),
                new DefaultAzureCredential());
-        });
     }
 
-    builder.Host.ConfigureLogging(logging => {
-        logging.ClearProviders();
-        logging.AddConsole();
-        logging.AddDebug();
-    });
+    builder.Logging.ClearProviders().AddConsole().AddDebug();
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseLazyLoadingProxies()

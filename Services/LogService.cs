@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeLewis.Models;
+using System.Globalization;
 
 namespace RecipeLewis.Services
 {
@@ -16,7 +17,7 @@ namespace RecipeLewis.Services
 
         private string TryConvertAdditionalData(object? requestData)
         {
-            string? objStr = null;
+            string? objStr;
             try
             {
                 objStr = JsonConvert.SerializeObject(requestData);
@@ -40,7 +41,7 @@ namespace RecipeLewis.Services
                 Level = ngxLog.Level,
                 LineNumber = ngxLog.LineNumber,
                 Message = ngxLog.Message,
-                Timestamp = DateTime.Parse(ngxLog.Timestamp)
+                Timestamp = DateTime.Parse(ngxLog.Timestamp, new CultureInfo("en-US"))
             };
             await _dbContext.AddAsync(newLog);
             await _dbContext.SaveChangesAsync();
@@ -65,7 +66,7 @@ namespace RecipeLewis.Services
                 Level = ngxLog.Level,
                 LineNumber = ngxLog.LineNumber,
                 Message = ngxLog.Message,
-                Timestamp = DateTime.Parse(ngxLog.Timestamp)
+                Timestamp = DateTime.Parse(ngxLog.Timestamp, new CultureInfo("en-US"))
             };
             await _dbContext.AddAsync(newLog);
             await _dbContext.SaveChangesAsync();

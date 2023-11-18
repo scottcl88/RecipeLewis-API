@@ -33,7 +33,7 @@ public class RecipeService : IRecipeService
         var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
         if (foundCategory == null)
         {
-            foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == 1);
+            foundCategory = _dbContext.Categories.First(x => x.CategoryId == 1);
         }
         recipe.Category = foundCategory;
 
@@ -61,7 +61,7 @@ public class RecipeService : IRecipeService
         var foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == request.Category.CategoryId);
         if (foundCategory == null)
         {
-            foundCategory = _dbContext.Categories.FirstOrDefault(x => x.CategoryId == 1);
+            foundCategory = _dbContext.Categories.First(x => x.CategoryId == 1);
         }
         recipe.Category = foundCategory;
         _dbContext.Recipes.Update(recipe);
@@ -77,7 +77,7 @@ public class RecipeService : IRecipeService
         for (int i = tags.Count - 1; i >= 0; i--)
         {
             var currentTag = tags[i];
-            var newTag = tagModels.FirstOrDefault(x => x.TagId == currentTag.TagId && x.Name == currentTag.Name);
+            var newTag = tagModels.Find(x => x.TagId == currentTag.TagId && x.Name == currentTag.Name);
             if (newTag == null)
             {
                 //tag deleted
@@ -128,7 +128,7 @@ public class RecipeService : IRecipeService
 
     public List<RecipeModel> Search(string query)
     {
-        var recipes = _dbContext.Recipes.Where(x => x.Title.ToLower().Contains(query) && x.DeletedDateTime == null);
+        var recipes = _dbContext.Recipes.Where(x => (x.Title == null || x.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)) && x.DeletedDateTime == null);
         var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
         return recipeModels;
     }
@@ -154,7 +154,7 @@ public class RecipeService : IRecipeService
         return documentModels;
     }
 
-    public Recipe? GetRecipeById(RecipeId recipeId)
+    public Recipe GetRecipeById(RecipeId recipeId)
     {
         var recipe = _dbContext.Recipes.FirstOrDefault(x => x.RecipeId == recipeId.Value && x.DeletedDateTime == null);
         if (recipe == null)

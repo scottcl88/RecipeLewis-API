@@ -15,7 +15,7 @@ public class AuthenticateResponse
     {
         UserId = user.UserId;
         Email = user.Email;
-        Name = user?.Name;
+        Name = user.Name;
         Role = user.Role;
         RequestedAccess = user.RequestedAccess;
         Token = jwtToken;

@@ -26,12 +26,12 @@ public class ErrorHandlerMiddleware
 
             switch (error)
             {
-                case AppException e:
+                case AppException:
                     // custom application error
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
 
-                case KeyNotFoundException e:
+                case KeyNotFoundException:
                     // not found error
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
@@ -42,7 +42,7 @@ public class ErrorHandlerMiddleware
                     break;
             }
 
-            var result = JsonSerializer.Serialize(new { message = error?.Message });
+            var result = JsonSerializer.Serialize(new { message = error.Message });
             await response.WriteAsync(result);
         }
     }

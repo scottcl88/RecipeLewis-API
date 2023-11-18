@@ -11,7 +11,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
     public AuthorizeAttribute(params Role[] roles)
     {
-        _roles = roles ?? new Role[] { };
+        _roles = roles ?? [];
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -22,7 +22,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
             return;
 
         // authorization
-        var user = (UserModel)context.HttpContext.Items["User"];
+        UserModel? user = (UserModel?)context.HttpContext.Items["User"];
         if (user == null || (_roles.Any() && !_roles.Contains(user.Role)))
         {
             // not logged in or role not authorized

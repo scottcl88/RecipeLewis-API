@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Models.Results;
 using Newtonsoft.Json;
@@ -20,13 +19,9 @@ namespace RecipeLewis.Controllers
     {
         private readonly IUserService _userService;
         private readonly LogService _logService;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
 
-        public UserController(IMapper mapper, IConfiguration configuration, IUserService userService, LogService logService, IHostEnvironment environment) : base(environment)
+        public UserController(IUserService userService, LogService logService, IHostEnvironment environment) : base(environment)
         {
-            _mapper = mapper;
-            _configuration = configuration;
             _userService = userService;
             _logService = logService;
         }
@@ -85,7 +80,7 @@ namespace RecipeLewis.Controllers
         [Authorize(Role.User, Role.Editor, Role.Admin)]
         [HttpGet("guid")]
         [SwaggerOperation(Summary = "Get the user by guid")]
-        public UserModel GetUserByGUID([Required] Guid userGUID)
+        public UserModel? GetUserByGUID([Required] Guid userGUID)
         {
             try
             {
@@ -140,7 +135,7 @@ namespace RecipeLewis.Controllers
                 return BadRequest(new { message = "Token is required" });
 
             // users can revoke their own tokens and admins can revoke any tokens
-            if (!User.OwnsToken(token) && User.Role != Role.Admin)
+            if (User == null || (!User.OwnsToken(token) && User.Role != Role.Admin))
                 return Unauthorized(new { message = "Unauthorized" });
 
             _userService.RevokeToken(token, ipAddress());
@@ -215,7 +210,7 @@ namespace RecipeLewis.Controllers
         [HttpPost("update")]
         public ActionResult<GenericResult> Update(UpdateUserRequest model)
         {
-            var account = _userService.Update(UserId, model);
+            _userService.Update(UserId, model);
             return Ok(new GenericResult { Success = true, Message = "Profile updated successfully" });
         }
 

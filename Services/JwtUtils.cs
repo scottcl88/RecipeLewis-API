@@ -71,7 +71,7 @@ public class JwtUtils : IJwtUtils
             // return user id from JWT token if validation successful
             return userId;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // return null if validation fails
             return null;

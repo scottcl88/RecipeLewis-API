@@ -9,7 +9,6 @@ namespace RecipeLewis.Controllers
     [ApiController]
     [Route("/api/[controller]")]
     [EnableCors("MyPolicy")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3400:Methods should not return constants", Justification = "Testing purposes, do not require constants")]
     public class LogController : BaseController
     {
         private readonly LogService _logService;

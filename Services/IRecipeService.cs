@@ -8,8 +8,8 @@ namespace RecipeLewis.Services
     {
         public List<RecipeModel> Search(string query);
 
-        public RecipeModel? Get(RecipeId userId);
-        public List<DocumentModel> GetDocuments(RecipeId userId);
+        public RecipeModel? Get(RecipeId recipeId);
+        public List<DocumentModel> GetDocuments(RecipeId recipeId);
 
         public List<RecipeModel> GetAll();
 

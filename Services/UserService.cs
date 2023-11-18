@@ -60,7 +60,7 @@ public class UserService : IUserService
         }
 
         // authentication successful so generate jwt and refresh tokens
-        var jwtToken = _jwtUtils.GenerateJwtToken(user);
+        string jwtToken = _jwtUtils.GenerateJwtToken(user);
         var refreshToken = _jwtUtils.GenerateRefreshToken(ipAddress);
         user.RefreshTokens.Add(refreshToken);
 
@@ -91,7 +91,9 @@ public class UserService : IUserService
         }
 
         if (!refreshToken.IsActive)
+        {
             throw new AppException("Invalid token");
+        }
 
         // replace old refresh token with a new one (rotate token)
         var newRefreshToken = rotateRefreshToken(refreshToken, ipAddress);
@@ -105,7 +107,7 @@ public class UserService : IUserService
         _dbContext.SaveChanges();
 
         // generate new jwt
-        var jwtToken = _jwtUtils.GenerateJwtToken(user);
+        string jwtToken = _jwtUtils.GenerateJwtToken(user);
 
         var userModel = _mapper.Map<UserModel>(user);
         return new AuthenticateResponse(userModel, jwtToken, newRefreshToken.Token);
@@ -117,7 +119,9 @@ public class UserService : IUserService
         var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
 
         if (!refreshToken.IsActive)
+        {
             throw new AppException("Invalid token");
+        }
 
         // revoke token and save
         revokeRefreshToken(refreshToken, ipAddress, "Revoked without replacement");
@@ -130,7 +134,9 @@ public class UserService : IUserService
         var user = _dbContext.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
 
         if (user == null)
+        {
             throw new AppException("Invalid token");
+        }
 
         return user;
     }
@@ -155,15 +161,19 @@ public class UserService : IUserService
         // recursively traverse the refresh token chain and ensure all descendants are revoked
         if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
         {
-            var childToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken.ReplacedByToken);
+            var childToken = user.RefreshTokens.Single(x => x.Token == refreshToken.ReplacedByToken);
             if (childToken.IsActive)
+            {
                 revokeRefreshToken(childToken, ipAddress, reason);
+            }
             else
+            {
                 revokeDescendantRefreshTokens(childToken, user, ipAddress, reason);
+            }
         }
     }
 
-    private void revokeRefreshToken(RefreshToken token, string ipAddress, string reason = null, string replacedByToken = null)
+    private void revokeRefreshToken(RefreshToken token, string ipAddress, string? reason = null, string? replacedByToken = null)
     {
         token.Revoked = DateTime.UtcNow;
         token.RevokedByIp = ipAddress;
@@ -205,7 +215,9 @@ public class UserService : IUserService
         var user = _dbContext.Users.SingleOrDefault(x => x.VerificationToken == token);
 
         if (user == null)
+        {
             throw new AppException("Verification failed");
+        }
 
         user.Verified = DateTime.UtcNow;
         user.VerificationToken = null;
@@ -219,7 +231,10 @@ public class UserService : IUserService
         var user = _dbContext.Users.SingleOrDefault(x => x.Email == request.Email);
 
         // always return ok response to prevent email enumeration
-        if (user == null) return;
+        if (user == null)
+        {
+            return;
+        }
 
         // create reset token that expires after 1 day
         user.ResetToken = generateResetToken();
@@ -268,7 +283,9 @@ public class UserService : IUserService
     {
         // validate
         if (_dbContext.Users.Any(x => x.Email == request.Email))
+        {
             throw new AppException($"Email '{request.Email}' is already registered");
+        }
 
         // map model to new user object
         var user = _mapper.Map<User>(request);
@@ -288,17 +305,6 @@ public class UserService : IUserService
     public UserModel Update(UserId id, UpdateUserRequest request)
     {
         var user = GetDbUserById(id);
-
-        //// validate
-        //if (user.Email != request.Email && _dbContext.Users.Any(x => x.Email == request.Email))
-        //    throw new AppException($"Email '{request.Email}' is already registered");
-
-        //// hash password if it was entered
-        //if (!string.IsNullOrEmpty(request.Password))
-        //    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-        // copy model to user and save
-        //_mapper.Map(request, user);
         user.Name = request.Name;
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.Users.Update(user);
@@ -315,8 +321,8 @@ public class UserService : IUserService
             throw new AppException("Cannot find user to promote");
         }
         var currentRole = user.Role;
-        var roleValue = (int)currentRole;
-        var prommoteValue = roleValue + 1;
+        int roleValue = (int)currentRole;
+        int prommoteValue = roleValue + 1;
         var newRole = (Database.Role)(prommoteValue);
         user.Role = newRole;
         user.ModifiedDateTime = DateTime.UtcNow;
@@ -333,8 +339,8 @@ public class UserService : IUserService
             throw new AppException("Cannot find user to demote");
         }
         var currentRole = user.Role;
-        var roleValue = (int)currentRole;
-        var demoteValue = roleValue - 1;
+        int roleValue = (int)currentRole;
+        int demoteValue = roleValue - 1;
         var newRole = (Database.Role)(demoteValue);
         user.Role = newRole;
         user.ModifiedDateTime = DateTime.UtcNow;
@@ -354,19 +360,25 @@ public class UserService : IUserService
     {
         var user = _dbContext.Users.SingleOrDefault(x =>
             x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
-        if (user == null) throw new AppException("Invalid token");
+        if (user == null)
+        {
+            throw new AppException("Invalid token");
+        }
+
         return user;
     }
 
     private string generateResetToken()
     {
         // token is a cryptographically strong random sequence of values
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        string token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
         // ensure token is unique by checking against db
-        var tokenIsUnique = !_dbContext.Users.Any(x => x.ResetToken == token);
+        bool tokenIsUnique = !_dbContext.Users.Any(x => x.ResetToken == token);
         if (!tokenIsUnique)
+        {
             return generateResetToken();
+        }
 
         return token;
     }
@@ -374,12 +386,14 @@ public class UserService : IUserService
     private string generateVerificationToken()
     {
         // token is a cryptographically strong random sequence of values
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        string token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
         // ensure token is unique by checking against db
-        var tokenIsUnique = !_dbContext.Users.Any(x => x.VerificationToken == token);
+        bool tokenIsUnique = !_dbContext.Users.Any(x => x.VerificationToken == token);
         if (!tokenIsUnique)
+        {
             return generateVerificationToken();
+        }
 
         return token;
     }
@@ -391,7 +405,7 @@ public class UserService : IUserService
             throw new AppException("Invalid origin when sending password reset email. " + origin);
         }
 
-        var verifyUrl = $"{origin}/verify-email?token={user.VerificationToken}";
+        string verifyUrl = $"{origin}/verify-email?token={user.VerificationToken}";
         string message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
 
@@ -433,7 +447,7 @@ public class UserService : IUserService
         {
             throw new AppException("Invalid origin when sending password reset email. " + origin);
         }
-        var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
+        string resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
         string message = $@"<p>Hello {user.Name},</p>
                         <p>Please click the below link to reset your password, the link will be valid for 1 day.</p>
                         <p><a href=""{resetUrl}"">{resetUrl}</a></p>

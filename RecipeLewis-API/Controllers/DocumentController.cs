@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Models.Results;
 using RecipeLewis.Models;
 using RecipeLewis.Services;
@@ -13,16 +12,12 @@ namespace RecipeLewis.Controllers
     [EnableCors("MyPolicy")]
     public class DocumentController : BaseController
     {
-        private readonly IConfiguration _configuration;
         private readonly IDocumentService _documentService;
-        private readonly LogService _logService;
-        private readonly string[] permittedExtensions = new string[] { ".txt", ".pdf", ".png", ".jpeg", ".jpg", ".gif", ".jfif" };
+        private readonly string[] permittedExtensions = [".txt", ".pdf", ".png", ".jpeg", ".jpg", ".gif", ".jfif"];
         private readonly long _fileSizeLimit = 26214400;
 
-        public DocumentController(IConfiguration configuration, IDocumentService documentService, LogService logService, IHostEnvironment environment) : base(environment)
+        public DocumentController(IDocumentService documentService, IHostEnvironment environment) : base(environment)
         {
-            _configuration = configuration;
-            _logService = logService;
             _documentService = documentService;
         }
 
@@ -32,7 +27,7 @@ namespace RecipeLewis.Controllers
         {
             if (recipeId <= 0 || documentId <= 0) return null;
             var doc = _documentService.Get(new RecipeId(recipeId), documentId);
-            return File(doc.Bytes, doc.ContentType, doc.FileName);
+            return File(doc.Bytes, doc.ContentType ?? "image/png", doc.FileName);
         }
 
         [AllowAnonymous]
@@ -41,7 +36,7 @@ namespace RecipeLewis.Controllers
         {
             if (recipeId <= 0 || documentId <= 0) return null;
             var doc = _documentService.Get(new RecipeId(recipeId), documentId);
-            return File(doc.Bytes, doc.ContentType);
+            return File(doc.Bytes, doc.ContentType ?? "image/png");
         }
 
         [Authorize(Role.Editor, Role.Admin)]
@@ -126,20 +121,6 @@ namespace RecipeLewis.Controllers
                 uploadResults.Add(uploadResult);
                 return StatusCode(500, uploadResults);
             }
-        }
-
-        private string GetMimeTypeForFileExtension(string filePath)
-        {
-            const string DefaultContentType = "application/octet-stream";
-
-            var provider = new FileExtensionContentTypeProvider();
-
-            if (!provider.TryGetContentType(filePath, out string contentType))
-            {
-                contentType = DefaultContentType;
-            }
-
-            return contentType;
         }
     }
 }
