@@ -82,6 +82,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
+// Fail fast when the JWT signing key is absent. Without this guard an empty
+// Secret silently yields tokens signed with a zero-length key, which is worse
+// than refusing to start: auth appears to work while being trivially forgeable.
+// Provide the value via `dotnet user-secrets` locally, or the
+// AppSettings__Secret environment variable in deployment. Never commit it.
+var jwtSecret = builder.Configuration.GetValue<string>("AppSettings:Secret");
+if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
+{
+    throw new InvalidOperationException(
+        "AppSettings:Secret is missing, empty, or shorter than 32 characters. " +
+        "Set it with `dotnet user-secrets set \"AppSettings:Secret\" \"<32+ random chars>\"` " +
+        "for local development, or via the AppSettings__Secret environment variable in deployment.");
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
