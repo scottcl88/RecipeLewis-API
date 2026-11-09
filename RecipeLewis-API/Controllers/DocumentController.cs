@@ -9,7 +9,6 @@ namespace RecipeLewis.Controllers
     [Authorize]
     [ApiController]
     [Route("/api/documents")]
-    [EnableCors("MyPolicy")]
     public class DocumentController : BaseController
     {
         private readonly IDocumentService _documentService;

@@ -8,7 +8,6 @@ namespace RecipeLewis.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    [EnableCors("MyPolicy")]
     public class LogController : BaseController
     {
         private readonly LogService _logService;

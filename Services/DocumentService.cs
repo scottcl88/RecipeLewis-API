@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using RecipeLewis.Services.Mapping;
 using Database;
 using RecipeLewis.Models;
 using System.Data;
@@ -8,14 +8,12 @@ namespace RecipeLewis.Services;
 public class DocumentService : IDocumentService
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly IRecipeService _recipeService;
 
-    public DocumentService(ApplicationDbContext dbContext, IRecipeService recipeService, IUserService userService, IMapper mapper)
+    public DocumentService(ApplicationDbContext dbContext, IRecipeService recipeService, IUserService userService)
     {
         _dbContext = dbContext;
-        _mapper = mapper;
         _recipeService = recipeService;
         _userService = userService;
     }
@@ -24,7 +22,7 @@ public class DocumentService : IDocumentService
     {
         var recipe = _recipeService.GetRecipeById(recipeId);
         var documents = recipe?.Documents.ToList();
-        var documentModels = _mapper.Map<List<DocumentModel>>(documents);
+        var documentModels = documents.ToModels();
         return documentModels;
     }
 
@@ -36,7 +34,7 @@ public class DocumentService : IDocumentService
         {
             throw new AppException($"Document not found for RecipeId {recipeId.Value} and DocumentId {documentId}");
         }
-        var documentModel = _mapper.Map<DocumentModel>(document);
+        var documentModel = document.ToModel();
         return documentModel;
     }
 
@@ -48,7 +46,7 @@ public class DocumentService : IDocumentService
             throw new AppException($"Recipe not found for RecipeId {recipeId.Value}");
         }
         var user = _userService.GetDbUserById(currentUser.UserId);
-        var newDocuments = _mapper.Map<List<Document>>(documentsToAdd);
+        var newDocuments = documentsToAdd.ToEntities();
         newDocuments.ForEach(x => x.DocumentId = 0);
         newDocuments.ForEach(x => x.CreatedBy = user);
         recipe.Documents.AddRange(newDocuments);

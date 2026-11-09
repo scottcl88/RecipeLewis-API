@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using RecipeLewis.Services.Mapping;
 using Database;
 using Microsoft.Extensions.Options;
 using RecipeLewis.Models;
@@ -15,14 +15,12 @@ public class UserService : IUserService
     private readonly IJwtUtils _jwtUtils;
     private readonly AppSettings _appSettings;
     private readonly LogService _logService;
-    private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
 
-    public UserService(ApplicationDbContext dbContext, LogService logService, IOptions<AppSettings> appSettings, IJwtUtils jwtUtils, IEmailService emailService, IMapper mapper)
+    public UserService(ApplicationDbContext dbContext, LogService logService, IOptions<AppSettings> appSettings, IJwtUtils jwtUtils, IEmailService emailService)
     {
         _dbContext = dbContext;
         _logService = logService;
-        _mapper = mapper;
         _jwtUtils = jwtUtils;
         _emailService = emailService;
         _appSettings = appSettings.Value;
@@ -73,7 +71,7 @@ public class UserService : IUserService
         _dbContext.Update(user);
         _dbContext.SaveChanges();
 
-        var userModel = _mapper.Map<UserModel>(user);
+        var userModel = user.ToModel();
         return new AuthenticateResponse(userModel, jwtToken, refreshToken.Token);
     }
 
@@ -109,7 +107,7 @@ public class UserService : IUserService
         // generate new jwt
         string jwtToken = _jwtUtils.GenerateJwtToken(user);
 
-        var userModel = _mapper.Map<UserModel>(user);
+        var userModel = user.ToModel();
         return new AuthenticateResponse(userModel, jwtToken, newRefreshToken.Token);
     }
 
@@ -192,7 +190,7 @@ public class UserService : IUserService
         }
 
         // map model to new user object
-        var user = _mapper.Map<User>(request);
+        var user = request.ToEntity();
         user.LastIPAddress = ipAddress;
 
         user.Role = Database.Role.User;
@@ -288,7 +286,7 @@ public class UserService : IUserService
         }
 
         // map model to new user object
-        var user = _mapper.Map<User>(request);
+        var user = request.ToEntity();
         user.CreatedDateTime = DateTime.UtcNow;
         user.Verified = DateTime.UtcNow;
 
@@ -299,7 +297,7 @@ public class UserService : IUserService
         _dbContext.Users.Add(user);
         _dbContext.SaveChanges();
 
-        return _mapper.Map<UserModel>(user);
+        return user.ToModel();
     }
 
     public UserModel Update(UserId id, UpdateUserRequest request)
@@ -310,7 +308,7 @@ public class UserService : IUserService
         _dbContext.Users.Update(user);
         _dbContext.SaveChanges();
 
-        return _mapper.Map<UserModel>(user);
+        return user.ToModel();
     }
 
     public UserModel Promote(UserId id, UserId? currentUser)
@@ -328,7 +326,7 @@ public class UserService : IUserService
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.SaveChanges();
         _logService.Info($"User {id.Value} promoted to {newRole} by User {currentUser?.Value}", currentUser);
-        return _mapper.Map<UserModel>(user);
+        return user.ToModel();
     }
 
     public UserModel Demote(UserId id, UserId? currentUser)
@@ -346,7 +344,7 @@ public class UserService : IUserService
         user.ModifiedDateTime = DateTime.UtcNow;
         _dbContext.SaveChanges();
         _logService.Info($"User {id.Value} demoted to {newRole} by User {currentUser?.Value}", currentUser);
-        return _mapper.Map<UserModel>(user);
+        return user.ToModel();
     }
 
     public void Delete(UserId id)
@@ -478,21 +476,21 @@ public class UserService : IUserService
     public List<UserModel> SearchUsers(UserId userId, string query)
     {
         var users = _dbContext.Users.Where(x => x.UserId != userId.Value && (x.Name.ToLower().Contains(query) || x.Email.ToLower().Contains(query)) && x.DeletedDateTime == null);
-        var userModels = _mapper.Map<List<UserModel>>(users.ToList());
+        var userModels = users.ToList().ToModels();
         return userModels;
     }
 
     public List<UserModel> GetAll()
     {
         var users = _dbContext.Users.Where(x => x.DeletedDateTime == null);
-        var userModels = _mapper.Map<List<UserModel>>(users.ToList());
+        var userModels = users.ToList().ToModels();
         return userModels;
     }
 
     public UserModel? GetUser(UserId userId)
     {
         var user = GetDbUserById(userId);
-        var userModel = _mapper.Map<UserModel>(user);
+        var userModel = user.ToModel();
         return userModel;
     }
 
@@ -513,7 +511,7 @@ public class UserService : IUserService
         {
             _logService.Error("GetUserByGUID failed - Unable to find user", userId, userGUID);
         }
-        var userModel = _mapper.Map<UserModel>(user);
+        var userModel = user.ToModel();
         return userModel;
     }
 }

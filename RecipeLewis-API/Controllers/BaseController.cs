@@ -6,7 +6,6 @@ namespace RecipeLewis.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    [EnableCors("MyPolicy")]
     public class BaseController : ControllerBase
     {
         protected readonly IHostEnvironment HostingEnvironment;
