@@ -65,7 +65,7 @@ var builder = WebApplication.CreateBuilder(args);
             Description = "API for the Recipe Lewis project. Copyright 2022 Scott Lewis. All rights reserved."
         });
     });
-    services.AddAutoMapper(typeof(OrganizationProfile));
+    services.AddAutoMapper(cfg => cfg.AddMaps(typeof(OrganizationProfile)));
 
     // configure strongly typed settings object
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
