@@ -10,7 +10,6 @@ namespace RecipeLewis.Controllers
     [Authorize]
     [ApiController]
     [Route("/api/recipes")]
-    [EnableCors("MyPolicy")]
     public class RecipeController : BaseController
     {
         private readonly IRecipeService _recipeService;

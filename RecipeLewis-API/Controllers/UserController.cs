@@ -14,7 +14,6 @@ namespace RecipeLewis.Controllers
     [Authorize]
     [ApiController]
     [Route("/api/users")]
-    [EnableCors("MyPolicy")]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
