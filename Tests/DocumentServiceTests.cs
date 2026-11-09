@@ -12,7 +12,6 @@ public class DocumentServiceTests
 {
     private Mock<IRecipeService> _recipeServiceMock;
     private Mock<IUserService> _userServiceMock;
-    private Mock<IMapper> _mapperMock;
     private ApplicationDbContext _dbContext;
     private DocumentService _documentService;
 
@@ -21,7 +20,6 @@ public class DocumentServiceTests
     {
         _recipeServiceMock = new Mock<IRecipeService>();
         _userServiceMock = new Mock<IUserService>();
-        _mapperMock = new Mock<IMapper>();
 
         // Use in-memory database for testing
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -33,8 +31,7 @@ public class DocumentServiceTests
         _documentService = new DocumentService(
             _dbContext,
             _recipeServiceMock.Object,
-            _userServiceMock.Object,
-            _mapperMock.Object);
+            _userServiceMock.Object);
     }
 
     [TestMethod]
@@ -44,7 +41,6 @@ public class DocumentServiceTests
         var recipeId = new RecipeId(1);
         var recipe = new Recipe { Documents = new List<Document> { new Document() } };
         _recipeServiceMock.Setup(x => x.GetRecipeById(recipeId)).Returns(recipe);
-        _mapperMock.Setup(x => x.Map<List<DocumentModel>>(It.IsAny<List<Document>>())).Returns(new List<DocumentModel>());
 
         // Act
         var result = _documentService.GetAll(recipeId);
@@ -62,7 +58,6 @@ public class DocumentServiceTests
         var documentId = 1;
         var recipe = new Recipe { Documents = new List<Document> { new Document { DocumentId = documentId } } };
         _recipeServiceMock.Setup(x => x.GetRecipeById(recipeId)).Returns(recipe);
-        _mapperMock.Setup(x => x.Map<DocumentModel>(It.IsAny<Document>())).Returns(new DocumentModel());
 
         // Act
         var result = _documentService.Get(recipeId, documentId);

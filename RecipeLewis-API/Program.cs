@@ -2,20 +2,12 @@ using Azure.Identity;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using RecipeLewis.Business;
 using RecipeLewis.Middleware;
 using RecipeLewis.Models;
 using RecipeLewis.Services;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 
-bool IsOriginAllowed(string host)
-{
-    var corsStrictOriginAllowed = new[] { "https://main.d2v2unaw7gu6b3.amplifyapp.com" };
-    var corsOriginAllowed = new[] { "localhost", "recipelewis-api.azurewebsites.net", "main.d2v2unaw7gu6b3.amplifyapp.com", "recipelewis.com" };
-    return corsOriginAllowed.Any(origin =>
-        Regex.IsMatch(host, $@"^((http(s)?)|({origin}))?://.*{origin}(:[0-9]+)?$", RegexOptions.IgnoreCase) || corsStrictOriginAllowed.Any(origin => origin == host));
-}
+const string CorsPolicyName = "RecipeLewisCors";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,13 +29,18 @@ var builder = WebApplication.CreateBuilder(args);
                     options.UseLazyLoadingProxies()
                    .UseSqlServer(
                        builder.Configuration["DefaultConnection"]));
-    services.AddCors(o => o.AddPolicy("MyPolicy", builder => {
-        builder.AllowCredentials()
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .WithExposedHeaders("content-disposition")
-               .SetIsOriginAllowed(IsOriginAllowed);
-    }));
+    // CORS: single named policy, strict exact-match origin allowlist from configuration (Cors:AllowedOrigins).
+    var allowedOrigins = CorsOrigins.Normalize(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>());
+    if (allowedOrigins.Length == 0)
+    {
+        throw new InvalidOperationException("Cors:AllowedOrigins is empty. Configure at least one explicit origin (no wildcards).");
+    }
+    services.AddCors(o => o.AddPolicy(CorsPolicyName, policy => policy
+        .SetIsOriginAllowed(origin => CorsOrigins.IsAllowed(origin, allowedOrigins))
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithExposedHeaders("content-disposition")
+        .AllowCredentials()));
     services.AddControllers().AddJsonOptions(x => {
         // serialize enums as strings in api responses (e.g. Role)
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -65,8 +62,6 @@ var builder = WebApplication.CreateBuilder(args);
             Description = "API for the Recipe Lewis project. Copyright 2022 Scott Lewis. All rights reserved."
         });
     });
-    services.AddAutoMapper(cfg => cfg.AddMaps(typeof(OrganizationProfile)));
-
     // configure strongly typed settings object
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
@@ -105,14 +100,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// CORS must run before authorization and the custom JWT middleware so preflight and error responses carry CORS headers.
+app.UseCors(CorsPolicyName);
 
-// global cors policy
-app.UseCors(x => x
-    .SetIsOriginAllowed(origin => true)
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .AllowCredentials());
+app.UseAuthorization();
 
 // global error handler
 app.UseMiddleware<ErrorHandlerMiddleware>();

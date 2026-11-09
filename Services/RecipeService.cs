@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using RecipeLewis.Services.Mapping;
 using Database;
 using RecipeLewis.Models;
 using RecipeLewis.Models.Requests;
@@ -10,21 +10,19 @@ public class RecipeService : IRecipeService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly LogService _logService;
-    private readonly IMapper _mapper;
     private readonly IUserService _userService;
 
-    public RecipeService(ApplicationDbContext dbContext, LogService logService, IUserService userService, IMapper mapper)
+    public RecipeService(ApplicationDbContext dbContext, LogService logService, IUserService userService)
     {
         _dbContext = dbContext;
         _logService = logService;
-        _mapper = mapper;
         _userService = userService;
     }
 
     public RecipeModel Create(CreateRecipeRequest request, UserModel currentUser)
     {
         // map model to new recipe object
-        var recipe = _mapper.Map<Recipe>(request);
+        var recipe = request.ToEntity();
         recipe.CreatedDateTime = DateTime.UtcNow;
         var user = _userService.GetDbUserById(currentUser.UserId);
         recipe.CreatedBy = user;
@@ -40,7 +38,7 @@ public class RecipeService : IRecipeService
         _dbContext.Recipes.Add(recipe);
         _dbContext.SaveChanges();
 
-        return _mapper.Map<RecipeModel>(recipe);
+        return recipe.ToModel();
     }
 
     public RecipeModel Update(UpdateRecipeRequest request, UserModel currentUser)
@@ -51,7 +49,7 @@ public class RecipeService : IRecipeService
             throw new AppException("Recipe not found");
         }
         var oldDocuments = recipe.Documents;
-        recipe = _mapper.Map(request, recipe);
+        recipe = request.ApplyTo(recipe);
         recipe.Documents = oldDocuments;
         recipe.ModifiedDateTime = DateTime.UtcNow;
         var user = _userService.GetDbUserById(currentUser.UserId);
@@ -66,7 +64,7 @@ public class RecipeService : IRecipeService
         _dbContext.Recipes.Update(recipe);
         _dbContext.SaveChanges();
 
-        return _mapper.Map<RecipeModel>(recipe);
+        return recipe.ToModel();
     }
 
     private List<Tag> GetDBTags(List<TagModel> tagModels, RecipeId recipeId, User? user)
@@ -128,21 +126,21 @@ public class RecipeService : IRecipeService
     public List<RecipeModel> Search(string query)
     {
         var recipes = _dbContext.Recipes.Where(x => (x.Title == null || x.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)) && x.DeletedDateTime == null);
-        var recipeModels = _mapper.Map<List<RecipeModel>>(recipes.ToList());
+        var recipeModels = recipes.ToList().ToModels();
         return recipeModels;
     }
 
     public List<RecipeModel> GetAll()
     {
         var recipes = _dbContext.Recipes.Where(x => x.DeletedDateTime == null).ToList();
-        var recipeModels = _mapper.Map<List<RecipeModel>>(recipes);
+        var recipeModels = recipes.ToModels();
         return recipeModels;
     }
 
     public RecipeModel? Get(RecipeId recipeId)
     {
         var recipe = GetRecipeById(recipeId);
-        var recipeModel = _mapper.Map<RecipeModel>(recipe);
+        var recipeModel = recipe.ToModel();
         return recipeModel;
     }
 
@@ -150,7 +148,7 @@ public class RecipeService : IRecipeService
     {
         var recipe = GetRecipeById(recipeId);
         recipe?.Documents.RemoveAll(x => x.DeletedDateTime != null);
-        var documentModels = _mapper.Map<List<DocumentModel>>(recipe?.Documents);
+        var documentModels = recipe?.Documents.ToModels() ?? new List<DocumentModel>();
         return documentModels;
     }
 
